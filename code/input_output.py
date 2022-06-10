@@ -3,7 +3,7 @@ from classes import Protein
 
 
 def create():
-    string = input() 
+    string = input("protein: ") 
     return Protein(string)
 
 
