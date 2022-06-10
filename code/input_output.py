@@ -8,7 +8,7 @@ def create():
 
 
 def output(protein):
-    with open("output.csv", "w") as f:
+    with open("data/output.csv", "w") as f:
         writer = csv.writer(f)
 
         writer.writerow(["amino", "fold"])
