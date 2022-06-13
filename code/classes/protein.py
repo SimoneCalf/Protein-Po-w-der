@@ -1,4 +1,4 @@
-from .amino import Amino
+from classes.amino import Amino
 from typing import Optional
 
 
