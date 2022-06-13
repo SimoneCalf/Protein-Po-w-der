@@ -10,4 +10,3 @@ class Grid:
             return grid
 
         self.grid = create_grid(size)
-        
