@@ -1,10 +1,4 @@
 import csv
-from classes.protein import Protein
-
-
-def create():
-    string = input("protein: ") 
-    return Protein(string)
 
 
 def output(protein):
@@ -24,12 +18,3 @@ def output(protein):
 
         writer.writerow(["score", 0])
     return
-
-
-def main():
-    protein = create()
-    output(protein)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,13 +1,6 @@
-from input_output import create
 from classes.grid import Grid
 
 
-def main():
-    protein = create()
+def create_grid(protein):
     grid = Grid(len(protein.aminos))
-    print(grid.grid)
-    return
-
-
-if __name__ == "__main__":
-    main()
+    return grid
