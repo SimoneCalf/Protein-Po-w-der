@@ -4,7 +4,7 @@ from classes.grid import Grid
 
 def main():
     protein = create()
-    grid = Grid(len(list(protein.aminos)))
+    grid = Grid(len(protein.aminos))
     print(grid.grid)
     return
 
