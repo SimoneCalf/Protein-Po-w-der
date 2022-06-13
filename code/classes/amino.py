@@ -8,5 +8,4 @@ class Amino:
         self.next = 0
 
     def set_fold(self, direction):
-        pass
-        #self.fold = direction
+        self.fold = direction
