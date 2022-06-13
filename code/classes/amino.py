@@ -4,5 +4,4 @@ class Amino:
         self.fold = 0
         self.x = 0
         self.y = 0
-
     # set fold
