@@ -7,6 +7,7 @@ class Grid:
                 for x in range(size):
                     row.append(0)
                 grid.append(row)
+            return grid
 
         self.grid = create_grid(size)
         
