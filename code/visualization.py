@@ -19,7 +19,12 @@ def visualize_protein(prot: Protein):
     --------
     .. _Path tutorial:
         https://matplotlib.org/stable/tutorials/advanced/path_tutorial.html
-    """
+
+    To Do
+    -----
+    - Center figure `example https://stackoverflow.com/a/4718438`
+    - Add H-bonds and score
+`    """
 
     points = [(0.0, 0.0)]
     circles = []
