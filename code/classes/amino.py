@@ -3,4 +3,6 @@ class Amino:
         self.letter = letter
         self.fold = 0
 
-    # set fold
+    def set_fold(self, direction):
+        pass
+        #self.fold = direction
