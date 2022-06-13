@@ -1,5 +1,5 @@
 import csv
-from classes import Protein
+from classes.protein import Protein
 
 
 def create():
