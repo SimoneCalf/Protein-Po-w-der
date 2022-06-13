@@ -3,7 +3,7 @@ from classes.protein import Protein
 
 
 def create():
-    string = input("protein: ") 
+    string = input("protein: ")
     return Protein(string)
 
 
@@ -14,7 +14,7 @@ def output(protein):
         writer.writerow(["amino", "fold"])
 
         for amino in protein.aminos:
-            writer.writerow([amino.letter, amino.fold])
+            writer.writerow([amino.letter, amino.direction])
 
         writer.writerow(["score", 0])
     return
