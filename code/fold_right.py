@@ -1,5 +1,5 @@
 def right(amino):
-    amino.set_fold(1)
+    amino.set_direction(1)
     amino.x = amino.previous.x + 1
     return
 
