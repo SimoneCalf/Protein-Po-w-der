@@ -1,4 +1,5 @@
 from classes.amino import Amino
+from .grid import Grid
 from typing import Optional
 
 
@@ -21,13 +22,14 @@ class Protein:
             representation of the directions this protein is folded,
             by default None
         """
-        def create_amino(letter: str, dir: int = 0):
-            return Amino(letter, dir)
-
         if directions is not None and len(directions) is len(string):
-            self._aminos = list(map(create_amino, string, directions))
+            self._aminos = list(map(self.create_amino, string, directions))
         else:
-            self._aminos = list(map(create_amino, string))
+            self._aminos = list(map(self.create_amino, string))
+
+        self.grid = Grid(len(string))
+        self.set_previous()
+        self.set_next()
 
     @property
     def aminos(self) -> list[Amino]:
@@ -39,6 +41,9 @@ class Protein:
             A new list containing the current Amino acids of this instance
         """
         return self._aminos.copy()
+
+    def create_amino(self, letter: str, dir: int = 0):
+        return Amino(letter, dir)
 
     def append(self, amino: Amino) -> list[Amino]:
         """Adds a new Amino Acid to this Protein instance
@@ -78,6 +83,28 @@ class Protein:
             return self.aminos
         except IndexError:
             return None
+
+    def set_previous(self):
+        self.aminos[0].previous = None
+
+        i = 0
+        for amino in self.aminos[1:]:
+            amino.previous = self.aminos[i]
+            i += 1
+
+    def set_next(self):
+        self.aminos[-1].next = None
+
+        i = 1
+        for amino in self.aminos[:-1]:
+            amino.next = self.aminos[i]
+            i += 1
+
+    def place_in_grid(self, amino):
+        self.grid.grid[amino.y][amino.x] = amino
+
+    def calc_score(self):
+        pass
 
     def __len__(self) -> int:
         """Returns the length of this protein

@@ -24,6 +24,10 @@ class Amino:
         """
         self.letter = letter
         self._direction = direction
+        self.x = 0
+        self.y = 0
+        self.previous = 0
+        self.next = 0
 
     @property
     def direction(self) -> int:

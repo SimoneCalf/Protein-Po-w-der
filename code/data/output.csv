@@ -1,0 +1,6 @@
+amino,fold,previous,next
+H,0,,P
+P,0,H,P
+P,0,P,H
+H,0,P,
+score,0
