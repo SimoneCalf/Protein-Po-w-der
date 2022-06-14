@@ -1,7 +1,8 @@
 def right(amino):
-    amino.set_direction(1)
+    amino.direction = 1
     amino.x = amino.previous.x + 1
     return
+
 
 def only_right(protein):
     protein.place_in_grid(protein.aminos[0])

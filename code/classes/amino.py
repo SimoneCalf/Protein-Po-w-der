@@ -34,13 +34,16 @@ class Amino:
         return self._direction
 
     @direction.setter
-    def set_direction(self, dir: int) -> Optional[int]:
+    def direction(self, dir: int) -> Optional[int]:
         if dir not in range(-2, 2):
-            return None
+            raise ValueError("Invalid direction.")
 
         self._direction = dir
-        return self.direction
+        return self._direction
 
-    def __str__(self):
+    def __repr__(self):
         """Represents this amino acid as a string."""
         return "{{ {}: {:+} }}".format(self.letter, self.direction)
+
+    def __str__(self):
+        return self.__repr__()
