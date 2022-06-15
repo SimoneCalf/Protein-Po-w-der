@@ -1,6 +1,6 @@
 from classes.amino import Amino
 from .grid import Grid
-from typing import Optional
+from typing import Optional, List
 
 
 class Protein:
@@ -11,7 +11,7 @@ class Protein:
     aminos: list[Amino]
         the list of amino acids that make up this protein
     """
-    def __init__(self, string: str, directions: list[int] = None):
+    def __init__(self, string: str, directions: List[int] = None):
         """Constructor method
 
         Parameters
@@ -32,7 +32,7 @@ class Protein:
         self.set_next()
 
     @property
-    def aminos(self) -> list[Amino]:
+    def aminos(self) -> List[Amino]:
         """Getter function for the list of Amino acids in this Protein instance
 
         Returns
@@ -45,7 +45,7 @@ class Protein:
     def create_amino(self, letter: str, dir: int = 0):
         return Amino(letter, dir)
 
-    def append(self, amino: Amino) -> list[Amino]:
+    def append(self, amino: Amino) -> List[Amino]:
         """Adds a new Amino Acid to this Protein instance
 
         Parameters
@@ -62,7 +62,7 @@ class Protein:
         self._aminos.append(amino)
         return self.aminos
 
-    def fold(self, index: int, direction: int) -> Optional[list[Amino]]:
+    def fold(self, index: int, direction: int) -> Optional[List[Amino]]:
         """Folds this protein in a given direction at a given point
 
         Parameters
