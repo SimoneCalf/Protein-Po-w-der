@@ -1,5 +1,5 @@
 amino,fold,previous,next
 H,0,,P
-P,0,H,H
-H,0,P,
+P,1,H,H
+H,1,P,
 score,0

@@ -80,6 +80,12 @@ class Protein:
         """
         try:
             self._aminos[index].direction = direction
+            if direction in [-1, 1]:
+                self.aminos[index].x = self.aminos[index].previous.x + direction
+                self.aminos[index].y = self.aminos[index].previous.y
+            else:
+                self.aminos[index].x = self.aminos[index].previous.x
+                self.aminos[index].y = self.aminos[index].previous.y + direction
             return self.aminos
         except IndexError:
             return None

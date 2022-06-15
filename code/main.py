@@ -7,8 +7,8 @@ from input_output import output
 
 def main():
     protein = create_protein()
-    output(protein)
     only_right(protein)
+    output(protein)
     print(protein.grid.grid)
 
 

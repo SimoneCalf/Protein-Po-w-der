@@ -1,11 +1,7 @@
-def right(amino):
-    amino.direction = 1
-    amino.x = amino.previous.x + 1
-    return
-
-
 def only_right(protein):
-    protein.place_in_grid(protein.aminos[0])
-    for amino in protein.aminos[1:]:
-        right(amino)
-        protein.place_in_grid(amino)
+    for index, amino in enumerate(protein.aminos):
+        if index == 0:
+            protein.place_in_grid(amino)
+        else: 
+            protein.fold(index, 1)
+            protein.place_in_grid(amino)
