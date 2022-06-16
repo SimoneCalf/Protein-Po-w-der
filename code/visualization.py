@@ -38,28 +38,30 @@ def visualize_protein(prot: Protein):
         amino_circle = plot.Circle(
             (x, y),
             .10,
-            color="{}".format("red" if amino.letter == "H" else "blue")
+            color="{}".format("red" if amino.type == "H" else "blue")
         )
         circles.append(amino_circle)
 
-
-        print(amino)
+        # teken geen lijn als we bij de laatste amino zijn
+        if(len(circles) == len(prot)):
+            break
 
         # voeg lijn naar volgende amino toe
         if amino.direction == -2:
-                y -= 1
-                min_y = min(y, min_y)
+            y -= 1
+            min_y = min(y, min_y)
         elif amino.direction == -1:
-                x -= 1
-                min_x = min(x, min_x)
+            x -= 1
+            min_x = min(x, min_x)
         elif amino.direction == 1:
-                x += 1
-                max_x = max(x, max_x)
+            x += 1
+            max_x = max(x, max_x)
         elif amino.direction == 2:
-                y += 1
-                max_y = max(y, max_y)
+            y += 1
+            max_y = max(y, max_y)
         else:
-                continue
+            pass
+
         points.append((x, y))
         codes.append(Path.LINETO)
 
@@ -96,5 +98,8 @@ def visualize_protein(prot: Protein):
 
 
 if __name__ == "__main__":
-    prot = Protein("HHPHPPPPH", [1, 2, -1, -1, 2, 2, 1, -2, 0])
-    visualize_protein(prot)
+    prot1 = Protein("HHPHPPPPH", [1, 2, -1, -1, 2, 2, 1, -2, 0])
+    prot2 = Protein("HHPHPPPPH")
+    visualize_protein(prot1)
+    visualize_protein(prot2)
+

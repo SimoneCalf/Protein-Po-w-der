@@ -3,4 +3,4 @@ __pycache__/
 *.py[cod]
 
 # output csv
-code/data/*.csv
+*/data/*.csv

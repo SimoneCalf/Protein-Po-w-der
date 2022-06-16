@@ -1,6 +1,7 @@
+from typing import Optional, Sequence, List
+import numpy as np
+
 from classes.amino import Amino
-from .grid import Grid
-from typing import Optional, List
 
 
 class Protein:
@@ -11,7 +12,7 @@ class Protein:
     aminos: list[Amino]
         the list of amino acids that make up this protein
     """
-    def __init__(self, string: str, directions: List[int] = None):
+    def __init__(self, string: str, directions: Sequence[int] = []):
         """Constructor method
 
         Parameters
@@ -22,14 +23,39 @@ class Protein:
             representation of the directions this protein is folded,
             by default None
         """
-        if directions is not None and len(directions) is len(string):
-            self._aminos = list(map(self.create_amino, string, directions))
-        else:
-            self._aminos = list(map(self.create_amino, string))
+        self.__aminos = []
+        self.grid = np.empty((len(string), len(string)), dtype=np.object_)
 
-        self.grid = Grid(len(string))
-        self.set_previous()
-        self.set_next()
+        # create amino instances for each char in string
+        for index, char in enumerate(string):
+            amino = Amino(
+                type=char,
+                direction=directions[index] if index < len(directions) else 1,
+                index=len(self.__aminos),
+                x=len(self.__aminos)
+            )
+            self.__aminos.append(amino)
+
+        #  move_dir = x = y = 0
+        #  for amino in self._aminos:
+        #      match move_dir:
+        #          case -2:
+        #              y += 1
+        #          case -1:
+        #              x = x-1 if x > 0 else 0
+        #          case 1:
+        #              x = x+1 if x < len(self.grid) else x
+        #          case 2:
+        #              y = y+1 if y < len(self.grid) else y
+        #
+        #      amino.x, amino.y = x, y
+        #      self.place_in_grid(amino)
+        #      move_dir = amino.direction
+
+        self.populate_grid()
+
+        #  self.set_previous()
+        #  self.set_next()
 
     @property
     def aminos(self) -> List[Amino]:
@@ -40,10 +66,77 @@ class Protein:
         list[Amino]
             A new list containing the current Amino acids of this instance
         """
-        return self._aminos.copy()
+        return self.__aminos.copy()
 
-    def create_amino(self, letter: str, dir: int = 0):
-        return Amino(letter, dir)
+    def populate_grid(self, index=0, in_place=False):
+        """Populates a 2d grid representation of the protein
+
+        The representation assumes the first amino is at [0, 0] and
+        follows each aminos direction to place each item relative to the
+        previous amino
+
+        Parameters
+        ----------
+        index : int, optional
+            the index of the point in a 1-dimensional array at which to start
+            traversing directions, only makes sense to use when editing the grid
+            in place. 0 by default.
+
+        in_place : bool, optional
+            whether to edit the current grid in-place,
+            or whether to replace the grid with a new one.
+            Default is False
+
+        Raises
+        ------
+        IndexError
+            Raises an IndexError when the given index is an invalid point in
+            the 1 dimensional array
+        """
+        # Safeguard index overflow
+        if index > len(self.__aminos):
+            raise IndexError(
+                "Given index '{}' is invalid; \
+                must be a number between 0 and {}"
+                .format(index, len(self.__aminos))
+            )
+
+        # use current array if in_place is set to true
+        # otherwise create an empty 2d array
+        grid = self.grid if in_place and self.grid is not None else \
+            np.empty((self.__len__(), self.__len__()), dtype=np.object_)
+
+        # if we're populating a completely empty array
+        # then we're adding the aminos up to index at their given position,
+        # otherwise, we leave any items BEFORE the index untouched
+        if not in_place:
+            for amino in self.__aminos[:index+1]:
+                grid[amino.y, amino.x] = amino
+
+        prev = self.__aminos[index]
+        for amino in self.__aminos[index+1:]:
+            # retrieve previous move_dir and coordinates
+            move_dir, x, y = prev.direction, prev.x, prev.y
+
+            # clear current position in grid
+            if in_place:
+                grid[amino.y, amino.x] = None
+
+            # change coordinates based on the previous aminos direction
+            if move_dir == -2:
+                y -= 1
+            elif move_dir == -1:
+                x = x-1 if x > 0 else 0
+            elif move_dir == 1:
+                x = x+1 if x < len(grid) else x
+            elif move_dir == 2:
+                y = y+1 if y < len(grid) else y
+
+            # insert amino at new(?) position in grid
+            amino.x, amino.y = x, y
+            grid[amino.y, amino.x] = amino
+            prev = amino
+        self.grid = grid
 
     def append(self, amino: Amino) -> List[Amino]:
         """Adds a new Amino Acid to this Protein instance
@@ -59,7 +152,9 @@ class Protein:
             a new list containing the amino acids that make up this protein,
             including the appended one
         """
-        self._aminos.append(amino)
+        amino.index = len(self.__aminos)
+        self.__aminos.append(amino)
+        self.populate_grid(amino.index)
         return self.aminos
 
     def fold(self, index: int, direction: int) -> Optional[List[Amino]]:
@@ -79,37 +174,15 @@ class Protein:
             or None if the given point was invalid
         """
         try:
-            self._aminos[index].direction = direction
-            if direction in [-1, 1]:
-                self.aminos[index].x = self.aminos[index].previous.x + direction
-                self.aminos[index].y = self.aminos[index].previous.y
-            else:
-                self.aminos[index].x = self.aminos[index].previous.x
-                self.aminos[index].y = self.aminos[index].previous.y + direction
+            self.__aminos[index].direction = direction
+            self.populate_grid(index, True)
+
             return self.aminos
         except IndexError:
             return None
 
-    def set_previous(self):
-        self.aminos[0].previous = None
-
-        i = 0
-        for amino in self.aminos[1:]:
-            amino.previous = self.aminos[i]
-            i += 1
-
-    def set_next(self):
-        self.aminos[-1].next = None
-
-        i = 1
-        for amino in self.aminos[:-1]:
-            amino.next = self.aminos[i]
-            i += 1
-
-    def place_in_grid(self, amino):
-        self.grid.grid[amino.y][amino.x] = amino
-
-    def calc_score(self):
+    @property
+    def score(self):
         pass
 
     def __len__(self) -> int:
@@ -120,7 +193,7 @@ class Protein:
         int
             the total amount of amino acids in this protein
         """
-        return len(self.aminos)
+        return len(self.__aminos)
 
     def __str__(self) -> str:
         """Represents this Protein instance as a string

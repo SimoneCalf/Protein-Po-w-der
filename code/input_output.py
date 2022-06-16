@@ -1,19 +1,19 @@
 import csv
-
+import os
 
 def output(protein):
+    # create dir if it does not already exist
+    if not os.path.exists("data/"):
+        os.makedirs("data/")
+
     with open("data/output.csv", "w") as f:
         writer = csv.writer(f)
 
-        writer.writerow(["amino", "fold", "previous", "next"])
+        writer.writerow(["index", "amino", "fold"])
 
         for amino in protein.aminos:
-            if amino.previous is None:
-                writer.writerow([amino.letter, amino.direction, None, amino.next.letter])
-            elif amino.next is None:
-                writer.writerow([amino.letter, amino.direction, amino.previous.letter, None])
-            else:
-                writer.writerow([amino.letter, amino.direction, amino.previous.letter, amino.next.letter])
-                
+            writer.writerow([amino.index, amino.type, amino.direction])
+
         writer.writerow(["score", 0])
+
     return
