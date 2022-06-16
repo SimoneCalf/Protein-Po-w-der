@@ -3,4 +3,7 @@ __pycache__/
 *.py[cod]
 
 # output csv
-*/data/*.csv
+*/**/data
+
+# any vscode settings
+.vscode/*
