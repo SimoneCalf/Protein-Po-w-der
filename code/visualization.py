@@ -42,21 +42,23 @@ def visualize_protein(prot: Protein):
         )
         circles.append(amino_circle)
 
+
+        print(amino)
+
         # voeg lijn naar volgende amino toe
-        match amino.direction:
-            case -2:
+        if amino.direction == -2:
                 y -= 1
                 min_y = min(y, min_y)
-            case -1:
+        elif amino.direction == -1:
                 x -= 1
                 min_x = min(x, min_x)
-            case 1:
+        elif amino.direction == 1:
                 x += 1
                 max_x = max(x, max_x)
-            case 2:
+        elif amino.direction == 2:
                 y += 1
                 max_y = max(y, max_y)
-            case _:
+        else:
                 continue
         points.append((x, y))
         codes.append(Path.LINETO)
