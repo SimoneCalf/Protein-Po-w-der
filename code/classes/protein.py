@@ -27,35 +27,17 @@ class Protein:
         self.grid = np.empty((len(string), len(string)), dtype=np.object_)
 
         # create amino instances for each char in string
-        for index, char in enumerate(string):
+        for char in string:
+
+            # create amino
             amino = Amino(
                 type=char,
-                direction=directions[index] if index < len(directions) else 1,
                 index=len(self.__aminos),
                 x=len(self.__aminos)
             )
             self.__aminos.append(amino)
 
-        #  move_dir = x = y = 0
-        #  for amino in self._aminos:
-        #      match move_dir:
-        #          case -2:
-        #              y += 1
-        #          case -1:
-        #              x = x-1 if x > 0 else 0
-        #          case 1:
-        #              x = x+1 if x < len(self.grid) else x
-        #          case 2:
-        #              y = y+1 if y < len(self.grid) else y
-        #
-        #      amino.x, amino.y = x, y
-        #      self.place_in_grid(amino)
-        #      move_dir = amino.direction
-
         self.populate_grid()
-
-        #  self.set_previous()
-        #  self.set_next()
 
     @property
     def aminos(self) -> List[Amino]:
@@ -181,20 +163,38 @@ class Protein:
         except IndexError:
             return None
 
+    def bordercontrol(self, x: int, y: int) -> bool:
+        # x  niet korten dan nul en langer dan proteine
+        return x >= 0 and y >= 0 and x < self.__len__() and y < self.__len__()
+
+    def empty_coordinate(self, x: int, y: int) -> bool:
+        return self.grid[y, x] is None
+
     @property
-    def score(self):
-        pass
+    def score(self) -> int:
+        """Returns the score of this protein
 
-    def bordercontrol(self, x, y):
-        #x niet korten dan nul en langer dan proteine
-        if x >= 0 and y >= 0 and x < len(self.__len__()) and y < len(self.__len__()):
-            return True
-        else:
-            return False
-        
+        Returns
+        -------
+        int
+            the score of this protein, the smaller the better
+        """
+        score = 0
 
-    def empty_coordinate(self, x, y):
-        return self.grid[y, x] == None
+        for amino in self.__aminos:
+            if amino.type == "P":
+                continue
+
+            directions = amino.foldoptions()
+            directions.remove(amino.direction)
+
+            for direction in directions:
+                x, y = Amino.get_coordinates_at(amino, direction)
+                if not self.empty_coordinate(x, y) and \
+                        self.grid[y, x].type == amino.type:
+                    score -= 1
+
+        return score
 
     def __len__(self) -> int:
         """Returns the length of this protein
