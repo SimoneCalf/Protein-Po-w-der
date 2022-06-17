@@ -88,11 +88,15 @@ class Amino:
         self._direction = dir
         return self._direction
 
+    
+
+    
+    
     def foldoptions(self) -> list:
         if self._direction == 0:
             return [1, 2]
         options = [-2, 2, -1, 1]
-        options.remove(self._direction)
+        options.remove(self._direction * -1)
         return options
 
     def __repr__(self):
