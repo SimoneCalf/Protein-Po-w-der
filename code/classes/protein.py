@@ -185,6 +185,17 @@ class Protein:
     def score(self):
         pass
 
+    def bordercontrol(self, x, y):
+        #x niet korten dan nul en langer dan proteine
+        if x >= 0 and y >= 0 and x < len(self.__len__()) and y < len(self.__len__()):
+            return True
+        else:
+            return False
+        
+
+    def empty_coordinate(self, x, y):
+        return self.grid[y, x] == None
+
     def __len__(self) -> int:
         """Returns the length of this protein
 
