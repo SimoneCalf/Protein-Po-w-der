@@ -1,4 +1,3 @@
-import queue
 from classes.amino import Amino
 from collections import deque
 
@@ -15,6 +14,7 @@ def fold_protein(string, current_amino, position):
         amino_stack.append(new_amino)
     print(amino_stack)
     fold_protein(string, amino_stack.pop(), position+1)
+
 
 if __name__ == "__main__":
     fold_protein("hp", amino_root, 0)
