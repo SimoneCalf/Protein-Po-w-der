@@ -27,11 +27,12 @@ class Protein:
         self.grid = np.empty((len(string), len(string)), dtype=np.object_)
 
         # create amino instances for each char in string
-        for char in string:
+        for i, char in enumerate(string):
 
             # create amino
             amino = Amino(
                 type=char,
+                direction=directions[i] if i < len(directions) else 0,
                 index=len(self.__aminos),
                 x=len(self.__aminos)
             )
@@ -61,8 +62,8 @@ class Protein:
         ----------
         index : int, optional
             the index of the point in a 1-dimensional array at which to start
-            traversing directions, only makes sense to use when editing the grid
-            in place. 0 by default.
+            traversing directions, only makes sense to use when editing the
+            grid in place. 0 by default.
 
         in_place : bool, optional
             whether to edit the current grid in-place,
@@ -98,24 +99,12 @@ class Protein:
         prev = self.__aminos[index]
         for amino in self.__aminos[index+1:]:
             # retrieve previous move_dir and coordinates
-            move_dir, x, y = prev.direction, prev.x, prev.y
 
             # clear current position in grid
             if in_place:
                 grid[amino.y, amino.x] = None
 
-            # change coordinates based on the previous aminos direction
-            if move_dir == -2:
-                y -= 1
-            elif move_dir == -1:
-                x = x-1 if x > 0 else 0
-            elif move_dir == 1:
-                x = x+1 if x < len(grid) else x
-            elif move_dir == 2:
-                y = y+1 if y < len(grid) else y
-
-            # insert amino at new(?) position in grid
-            amino.x, amino.y = x, y
+            amino.x, amino.y = Amino.get_coordinates_at(prev, prev.direction)
             grid[amino.y, amino.x] = amino
             prev = amino
         self.grid = grid
@@ -164,7 +153,7 @@ class Protein:
             return None
 
     def bordercontrol(self, x: int, y: int) -> bool:
-        # x  niet korten dan nul en langer dan proteine
+        # x  niet korten dan nul en langer dan het eiwit
         return x >= 0 and y >= 0 and x < self.__len__() and y < self.__len__()
 
     def empty_coordinate(self, x: int, y: int) -> bool:

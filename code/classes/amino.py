@@ -15,10 +15,18 @@ class Amino:
         the absolute x coordinate of this amino
     y: int
         the absolute y coordinate of this amino
-    prev_amino: int
-        the previous amino in a sequence of aminos
-    next_amino: int
-        the next amino in a sequence of aminos
+
+    Methods
+    -------
+    foldoptions()
+        Returns all valid possible fold directions
+
+    Static Methods
+    --------------
+    get_coordinates_at(amino=Amino, direction=1)
+        Given an amino and a possible direction it will return the absolute
+        coordinates of that direction relative to the amino
+
     """
 
     def __init__(
@@ -88,16 +96,44 @@ class Amino:
         self._direction = dir
         return self._direction
 
-    
-
-    
-    
     def foldoptions(self) -> list:
         if self._direction == 0:
             return [1, 2]
         options = [-2, 2, -1, 1]
         options.remove(self._direction * -1)
         return options
+
+    @staticmethod
+    def get_coordinates_at(amino, direction: int) -> typing.Tuple[int]:
+        """Returns the coordinates of a point a given direction away from a
+        given Amino.
+
+        Parameters
+        ----------
+        amino : Amino
+            The amino to use at starting point
+        direction : int
+            the Direction from
+
+        Returns
+        -------
+        tuple(int, int)
+            a tuple returning two ints, representing the absolute coordinates,
+            the first being the x-axis and the second the y-axis
+        """
+        x, y = amino.x, amino.y
+        if direction == -2:
+            y -= 1
+        elif direction == -1:
+            x -= 1
+        elif direction == 1:
+            x += 1
+        elif direction == 2:
+            y += 1
+        else:
+            pass
+
+        return (x, y)
 
     def __repr__(self):
         """Represents this amino acid as a string."""
