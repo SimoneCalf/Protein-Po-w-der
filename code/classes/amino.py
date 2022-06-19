@@ -1,4 +1,4 @@
-import typing
+from typing import Sequence
 
 
 class Amino:
@@ -33,7 +33,7 @@ class Amino:
             self,
             type: str,
             direction: int = 0,
-            coords: typing.Sequence = (0, 0, 0),
+            coords: Sequence = (0, 0, 0),
             x: int = 0,
             y: int = 0,
             z: int = 0,
@@ -60,6 +60,8 @@ class Amino:
             ignored if not given
         index:
             the postion of this amino as if in a 1d grid. by default 0
+        bonded: Amino, optional
+            optional amino this amino forms a bond with. by default None
 
 
         Raises
@@ -80,6 +82,7 @@ class Amino:
         self.y = y if y != 0 or len(coords) < 2 else coords[1]
         self.z = z if z != 0 or len(coords) < 3 else coords[2]
         self.index = index
+        self.bonded = set()
 
     @property
     def direction(self) -> int:
@@ -104,7 +107,7 @@ class Amino:
         return options
 
     @staticmethod
-    def get_coordinates_at(amino, direction: int) -> typing.Tuple[int]:
+    def get_coordinates_at(amino, direction: int) -> tuple[int, int]:
         """Returns the coordinates of a point a given direction away from a
         given Amino.
 
@@ -117,7 +120,7 @@ class Amino:
 
         Returns
         -------
-        tuple(int, int)
+        tuple[int, int]
             a tuple returning two ints, representing the absolute coordinates,
             the first being the x-axis and the second the y-axis
         """
@@ -135,6 +138,73 @@ class Amino:
 
         return (x, y)
 
+    def next(self) -> tuple[int, int]:
+        """Returns the absolute coordinates this amino's direction is pointing to
+
+        Returns
+        -------
+        tuple[int, int]
+            the x and y coordinates of the point this amino is pointing to
+        """
+        return Amino.get_coordinates_at(self, self.direction)
+
     def __repr__(self):
         """Represents this amino acid as a string."""
         return "( {}{}: {:+} )".format(self.type, self.index, self.direction)
+
+    def __hash__(self) -> int:
+        """Returns a unique hash for an Amino object
+
+        Returns
+        -------
+        int
+            a unique integer by which python can identify a specific Amino
+            instance
+        """
+        return hash((
+            self.type,
+            self.index,
+            self._direction,
+            self.x,
+            self.y,
+            self.z
+            ))
+
+
+class AminoBond:
+    """Represents a two-way bond between two aminos
+
+    Attributes
+    ----------
+    origin: Amino
+        the origin of the bond, since it's a two-way bond which amino is the
+        origin is arbitrary, and does not matter for equality
+    target: Amino
+        the target of the bond, since it's a two-way bond which amino is the
+        origin is arbitrary, and does not matter for equality
+
+    """
+    def __init__(self, origin: Amino, target: Amino) -> None:
+        self.origin = origin
+        self.target = target
+
+    def __eq__(self, __o: object) -> bool:
+        if type(__o) != type(self):
+            return False
+        if __o.origin != self.origin and __o.origin != self.target:
+            return False
+
+        if __o.target != self.target and __o.target != self.origin:
+            return False
+
+        if __o.target == __o.origin and self.target != self.origin:
+            return False
+
+        return True
+
+    def __hash__(self) -> int:
+        return hash((self.origin, self.target))
+
+    def __repr__(self) -> str:
+        return f"{self.origin.type}{self.origin.index}-" +\
+            f"{self.target.type}{self.target.index}"

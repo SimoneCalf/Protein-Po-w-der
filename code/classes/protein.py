@@ -1,7 +1,8 @@
-from typing import Optional, Sequence, List
+from typing import List, Optional, Sequence, Set, Tuple
+from functools import reduce
 import numpy as np
 
-from classes.amino import Amino
+from classes.amino import Amino, AminoBond
 
 
 class Protein:
@@ -150,6 +151,7 @@ class Protein:
         """
         amino.index = len(self.__aminos)
         self.__aminos.append(amino)
+        self.calculate_bonds(self.__aminos[amino.index:])
         self.__populate_grid(amino.index)
         return self.aminos
 
@@ -171,6 +173,7 @@ class Protein:
         """
         try:
             self.__aminos[index].direction = direction
+            self.calculate_bonds(self.__aminos[index:])
             self.__populate_grid(index, True)
 
             return self.aminos
@@ -184,6 +187,50 @@ class Protein:
     def empty_coordinate(self, x: int, y: int) -> bool:
         return self.__grid[y, x] is None
 
+    def calculate_bonds(self, aminos: Sequence) -> Set[Tuple[Amino]]:
+        bonds = []
+
+        # loop through given list of aminos
+        for amino in aminos:
+            # don't process P aminos, aminos that already have a bond
+            # or the last amino
+            # (if it has a bond, that will have already been processed)
+            # and the 0 direction messes things up
+            if amino.type == "P" or amino.direction == 0:
+                continue
+
+            # get the directions to check
+            # and remove directions of the neighbours
+            directions = amino.foldoptions()
+            directions.remove(amino.direction)
+            prev = self.__aminos[amino.index-1] if amino.index > 0 else None
+            if prev and (prev.direction * -1) in directions:
+                directions.remove(prev.direction * -1)
+
+            print(directions)
+
+            print(
+                f"amino: {amino.type}{amino.index} " +
+                f"direction:{amino.direction}; valid directions:{directions}"
+            )
+
+            # loop through the remaining valid directions
+            for direction in directions:
+                # retrieve absolute coordinates at directions
+                x, y = Amino.get_coordinates_at(amino, direction)
+                # then, if the there's an amino at the coordinates
+                # that isn't a P amino...
+                if not self.empty_coordinate(x, y) and \
+                        self.__grid[y, x].type != "P":
+                    # set the bonded property of each respective
+                    # amino to their opposite, and add it the the set
+                    amino.bonded.add(self.__grid[y, x])
+                    self.__grid[y, x].bonded.add(amino)
+                    bond = AminoBond(amino, self.__grid[y, x])
+                    if bond not in bonds:
+                        bonds.append(AminoBond(amino, self.__grid[y, x]))
+        return bonds
+
     @property
     def score(self) -> int:
         """Returns the score of this protein
@@ -195,18 +242,17 @@ class Protein:
         """
         score = 0
 
-        for amino in self.__aminos:
-            if amino.type == "P":
-                continue
-
-            directions = amino.foldoptions()
-            directions.remove(amino.direction)
-
-            for direction in directions:
-                x, y = Amino.get_coordinates_at(amino, direction)
-                if not self.empty_coordinate(x, y) and \
-                        self.grid[y, x].type == amino.type:
-                    score -= 1
+        # retrieve and loop through bonds
+        for bond in self.calculate_bonds(self.__aminos):
+            print(bond)
+            if bond.origin.type == bond.target.type and \
+                    bond.origin.type == "H":
+                score -= 1
+            elif bond.origin.type == bond.target.type and \
+                    bond.origin.type == "C":
+                score -= 5
+            elif bond.origin.type != "P" and bond.target.type != "P":
+                score -= 1
 
         return score
 
