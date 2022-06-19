@@ -24,7 +24,7 @@ class Protein:
             by default None
         """
         self.__aminos = []
-        self.grid = np.empty((len(string), len(string)), dtype=np.object_)
+        self.__grid = np.empty((len(string), len(string)), dtype=np.object_)
 
         # create amino instances for each char in string
         for i, char in enumerate(string):
@@ -38,7 +38,7 @@ class Protein:
             )
             self.__aminos.append(amino)
 
-        self.populate_grid()
+        self.__populate_grid()
 
     @property
     def aminos(self) -> List[Amino]:
@@ -51,7 +51,7 @@ class Protein:
         """
         return self.__aminos.copy()
 
-    def populate_grid(self, index=0, in_place=False):
+    def __populate_grid(self, index=0, in_place=False):
         """Populates a 2d grid representation of the protein
 
         The representation assumes the first amino is at [0, 0] and
@@ -86,7 +86,7 @@ class Protein:
 
         # use current array if in_place is set to true
         # otherwise create an empty 2d array
-        grid = self.grid if in_place and self.grid is not None else \
+        grid = self.__grid if in_place and self.__grid is not None else \
             np.empty((self.__len__(), self.__len__()), dtype=np.object_)
 
         # if we're populating a completely empty array
@@ -107,7 +107,32 @@ class Protein:
             amino.x, amino.y = Amino.get_coordinates_at(prev, prev.direction)
             grid[amino.y, amino.x] = amino
             prev = amino
-        self.grid = grid
+        self.__grid = grid
+
+    @property
+    def grid(self) -> np.ndarray:
+        """A grid representing this amino as-if in a 2d Array,
+        with the x and y axis corrected to show the protein within bounds
+
+        Returns
+        -------
+        numpy.ndarray:
+            read-only 2d array, with the axis corrected to show the entire
+            protein within bounds
+
+        """
+        # retrieve smallest x and y coords
+        min_x, min_y = reduce(
+            lambda a, b: (min(a[0], b[0]), min(a[1], b[1])),
+            list(map(lambda a: (a.x, a.y), self.__aminos))
+        )
+
+        # correct grid representation
+        return np.roll(
+            self.__grid,
+            (min(min_y, 0) * -1, min(min_x, 0) * -1),
+            (0, 1)
+        )
 
     def append(self, amino: Amino) -> List[Amino]:
         """Adds a new Amino Acid to this Protein instance
@@ -125,7 +150,7 @@ class Protein:
         """
         amino.index = len(self.__aminos)
         self.__aminos.append(amino)
-        self.populate_grid(amino.index)
+        self.__populate_grid(amino.index)
         return self.aminos
 
     def fold(self, index: int, direction: int) -> Optional[List[Amino]]:
@@ -146,7 +171,7 @@ class Protein:
         """
         try:
             self.__aminos[index].direction = direction
-            self.populate_grid(index, True)
+            self.__populate_grid(index, True)
 
             return self.aminos
         except IndexError:
@@ -157,7 +182,7 @@ class Protein:
         return x >= 0 and y >= 0 and x < self.__len__() and y < self.__len__()
 
     def empty_coordinate(self, x: int, y: int) -> bool:
-        return self.grid[y, x] is None
+        return self.__grid[y, x] is None
 
     @property
     def score(self) -> int:
