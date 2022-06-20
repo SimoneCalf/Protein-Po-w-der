@@ -180,11 +180,8 @@ class Protein:
         except IndexError:
             return None
 
-    def bordercontrol(self, x: int, y: int) -> bool:
-        # x  niet korten dan nul en langer dan het eiwit
-        return x >= 0 and y >= 0 and x < self.__len__() and y < self.__len__()
-
-    def empty_coordinate(self, x: int, y: int) -> bool:
+    def empty_coordinate(self, amino, direction) -> bool:
+        x, y = amino.get_coordinates_at(amino, direction)
         return self.__grid[y, x] is None
 
     def calculate_bonds(self, aminos: Sequence) -> Set[Tuple[Amino]]:
@@ -220,7 +217,7 @@ class Protein:
                 x, y = Amino.get_coordinates_at(amino, direction)
                 # then, if the there's an amino at the coordinates
                 # that isn't a P amino...
-                if not self.empty_coordinate(x, y) and \
+                if not self.empty_coordinate(amino, direction) and \
                         self.__grid[y, x].type != "P":
                     # set the bonded property of each respective
                     # amino to their opposite, and add it the the set

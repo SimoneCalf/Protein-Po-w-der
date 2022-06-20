@@ -7,10 +7,7 @@ def random_folds(protein):
         else:
             options = amino.foldoptions()
             for option in options:
-                if protein.bordercontrol(amino.x, amino.y) is not True:
-                    options.remove(option)
-                    continue
-                if protein.empty_coordinate(amino.x, amino.y) is not True:
+                if protein.empty_coordinate(amino, option) is False:
                     options.remove(option)
 
             direction = random.choice(options)
