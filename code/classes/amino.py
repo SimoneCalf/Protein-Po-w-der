@@ -16,11 +16,6 @@ class Amino:
     y: int
         the absolute y coordinate of this amino
 
-    Methods
-    -------
-    foldoptions()
-        Returns all valid possible fold directions
-
     Static Methods
     --------------
     get_coordinates_at(amino=Amino, direction=1)
@@ -76,7 +71,7 @@ class Amino:
                  Must be an interger between -2 and 2"
             )
 
-        self.type = type
+        self.type = type.upper()
         self._direction = direction
         self.x = x if x != 0 or len(coords) < 1 else coords[0]
         self.y = y if y != 0 or len(coords) < 2 else coords[1]
@@ -98,13 +93,6 @@ class Amino:
 
         self._direction = dir
         return self._direction
-
-    def foldoptions(self) -> list:
-        if self._direction == 0:
-            return [1, 2]
-        options = [-2, 2, -1, 1]
-        options.remove(self._direction * -1)
-        return options
 
     @staticmethod
     def get_coordinates_at(amino, direction: int) -> Tuple[int, int]:

@@ -155,6 +155,20 @@ class Protein:
         self.__populate_grid(amino.index)
         return self.aminos
 
+    def foldoptions(self, amino):
+        if amino.index == 0:
+            return [1]
+        elif amino.index == 1:
+            return [1, 2]
+
+        prev = self.__aminos[amino.index-1] if amino.index > 0 else None
+        folds = [1, 2, -2, -1]
+
+        if prev:
+            folds.remove(prev.direction * -1)
+
+        return folds
+
     def fold(self, index: int, direction: int) -> Optional[List[Amino]]:
         """Folds this protein in a given direction at a given point
 
@@ -174,7 +188,7 @@ class Protein:
         try:
             self.__aminos[index].direction = direction
             self.calculate_bonds(self.__aminos[index:])
-            self.__populate_grid(index, True)
+            self.__populate_grid()
 
             return self.aminos
         except IndexError:
@@ -198,7 +212,7 @@ class Protein:
 
             # get the directions to check
             # and remove directions of the neighbours
-            directions = amino.foldoptions()
+            directions = self.foldoptions(amino)
             directions.remove(amino.direction)
             prev = self.__aminos[amino.index-1] if amino.index > 0 else None
             if prev and (prev.direction * -1) in directions:

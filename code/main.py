@@ -1,6 +1,7 @@
 from input_output import output
 from random_protein import random_folds
 from classes.protein import Protein
+from visualization import visualize_protein
 
 
 def create_protein() -> Protein:
@@ -21,7 +22,7 @@ def create_protein() -> Protein:
 
         # if no directions were given fold amino into a straight line
         if not directions:
-            return Protein(string, [1] * len(string))
+            return Protein(string)
 
         # otherwise, try to parse them into ints and return the protein
         dir_list = directions.split(",")
@@ -45,10 +46,10 @@ def create_protein() -> Protein:
 
 def main():
     protein = create_protein()
-    print(protein.grid)
     random_folds(protein)
     output(protein)
     print(protein.grid)
+    visualize_protein(protein)
 
 
 if __name__ == "__main__":

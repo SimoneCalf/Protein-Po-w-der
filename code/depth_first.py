@@ -9,7 +9,7 @@ amino_root = Amino("")
 def fold_protein(string, current_amino, position):
     if position == len(string):
         return
-    for direction in current_amino.foldoptions():
+    for direction in protein.foldoptions(current_amino):
         new_amino = Amino(string[position], direction)
         amino_stack.append(new_amino)
     print(amino_stack)
