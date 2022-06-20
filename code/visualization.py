@@ -5,6 +5,7 @@ import matplotlib.patches as patches
 
 # Local imports
 from classes.protein import Protein
+from classes.amino import Amino
 
 
 def visualize_protein(prot: Protein):
@@ -28,6 +29,7 @@ def visualize_protein(prot: Protein):
 
     points = [(0.0, 0.0)]
     circles = []
+    bonds, processed = [], []
     codes = [Path.MOVETO]
     min_x = max_x = min_y = max_y = 0
 
@@ -46,22 +48,12 @@ def visualize_protein(prot: Protein):
         if(len(circles) == len(prot)):
             break
 
-        # voeg lijn naar volgende amino toe
-        if amino.direction == -2:
-            y -= 1
-            min_y = min(y, min_y)
-        elif amino.direction == -1:
-            x -= 1
-            min_x = min(x, min_x)
-        elif amino.direction == 1:
-            x += 1
-            max_x = max(x, max_x)
-        elif amino.direction == 2:
-            y += 1
-            max_y = max(y, max_y)
-        else:
-            pass
+        # zoek het volgende punt om een lijn naar te tekenen
+        x, y = Amino.get_coordinates_at(amino, amino.direction)
+        min_x, max_x = min(x, min_x), max(x, max_x)
+        min_y, max_y = min(y, min_y), max(y, max_y)
 
+        # voeg de lijn toe aan de lijst
         points.append((x, y))
         codes.append(Path.LINETO)
 
@@ -69,11 +61,35 @@ def visualize_protein(prot: Protein):
     points.append((0.0, 0.0))
     codes.append(Path.STOP)
 
+    # loop door the bonden
+    for b in prot.calculate_bonds(prot.aminos):
+        if b not in processed:
+            # maak een stippellijn aan
+            path = Path(
+                [
+                    (b.origin.x, b.origin.y),
+                    (b.target.x, b.target.y),
+                    (0.0, 0.0)
+                ],
+                [
+                    Path.MOVETO,
+                    Path.LINETO,
+                    Path.STOP
+                ]
+            )
+            bonds.append(path)
+            processed.append(b)
+
     # voeg de lijntekening toe
     path = Path(points, codes)
     fig, ax = plot.subplots()
     patch = patches.PathPatch(path, facecolor="none", lw=2)
     ax.add_patch(patch)
+
+    # voeg de bonden toe
+    for b in bonds:
+        bond_patch = patches.PathPatch(b, facecolor="none", lw=1, ls="--")
+        ax.add_patch(bond_patch)
 
     # voeg de cirkels toe
     for circle in circles:
@@ -88,7 +104,8 @@ def visualize_protein(prot: Protein):
     #   https://matplotlib.org/stable/tutorials/intermediate/legend_guide.html
     legend = [
         patches.Patch(color="red", label="Hydrofoob"),
-        patches.Patch(color="blue", label="Polair")
+        patches.Patch(color="blue", label="Polair"),
+        patches.Patch(color="none", label=f"Stabiliteit: {prot.score}")
     ]
 
     ax.legend(handles=legend)
@@ -99,7 +116,5 @@ def visualize_protein(prot: Protein):
 
 if __name__ == "__main__":
     prot1 = Protein("HHPHPPPPH", [1, 2, -1, -1, 2, 2, 1, -2, 0])
-    prot2 = Protein("HHPHPPPPH")
+    print(prot1.score)
     visualize_protein(prot1)
-    visualize_protein(prot2)
-

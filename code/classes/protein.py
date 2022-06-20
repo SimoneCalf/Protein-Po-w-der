@@ -1,7 +1,8 @@
-from typing import Optional, Sequence, List
+from typing import List, Optional, Sequence, Set, Tuple
+from functools import reduce
 import numpy as np
 
-from classes.amino import Amino
+from classes.amino import Amino, AminoBond
 
 
 class Protein:
@@ -24,38 +25,21 @@ class Protein:
             by default None
         """
         self.__aminos = []
-        self.grid = np.empty((len(string), len(string)), dtype=np.object_)
+        self.__grid = np.empty((len(string), len(string)), dtype=np.object_)
 
         # create amino instances for each char in string
-        for index, char in enumerate(string):
+        for i, char in enumerate(string):
+
+            # create amino
             amino = Amino(
                 type=char,
-                direction=directions[index] if index < len(directions) else 1,
+                direction=directions[i] if i < len(directions) else 0,
                 index=len(self.__aminos),
                 x=len(self.__aminos)
             )
             self.__aminos.append(amino)
 
-        #  move_dir = x = y = 0
-        #  for amino in self._aminos:
-        #      match move_dir:
-        #          case -2:
-        #              y += 1
-        #          case -1:
-        #              x = x-1 if x > 0 else 0
-        #          case 1:
-        #              x = x+1 if x < len(self.grid) else x
-        #          case 2:
-        #              y = y+1 if y < len(self.grid) else y
-        #
-        #      amino.x, amino.y = x, y
-        #      self.place_in_grid(amino)
-        #      move_dir = amino.direction
-
-        self.populate_grid()
-
-        #  self.set_previous()
-        #  self.set_next()
+        self.__populate_grid()
 
     @property
     def aminos(self) -> List[Amino]:
@@ -68,7 +52,7 @@ class Protein:
         """
         return self.__aminos.copy()
 
-    def populate_grid(self, index=0, in_place=False):
+    def __populate_grid(self, index=0, in_place=False):
         """Populates a 2d grid representation of the protein
 
         The representation assumes the first amino is at [0, 0] and
@@ -79,8 +63,8 @@ class Protein:
         ----------
         index : int, optional
             the index of the point in a 1-dimensional array at which to start
-            traversing directions, only makes sense to use when editing the grid
-            in place. 0 by default.
+            traversing directions, only makes sense to use when editing the
+            grid in place. 0 by default.
 
         in_place : bool, optional
             whether to edit the current grid in-place,
@@ -103,7 +87,7 @@ class Protein:
 
         # use current array if in_place is set to true
         # otherwise create an empty 2d array
-        grid = self.grid if in_place and self.grid is not None else \
+        grid = self.__grid if in_place and self.__grid is not None else \
             np.empty((self.__len__(), self.__len__()), dtype=np.object_)
 
         # if we're populating a completely empty array
@@ -116,27 +100,40 @@ class Protein:
         prev = self.__aminos[index]
         for amino in self.__aminos[index+1:]:
             # retrieve previous move_dir and coordinates
-            move_dir, x, y = prev.direction, prev.x, prev.y
 
             # clear current position in grid
             if in_place:
                 grid[amino.y, amino.x] = None
 
-            # change coordinates based on the previous aminos direction
-            if move_dir == -2:
-                y -= 1
-            elif move_dir == -1:
-                x = x-1 if x > 0 else 0
-            elif move_dir == 1:
-                x = x+1 if x < len(grid) else x
-            elif move_dir == 2:
-                y = y+1 if y < len(grid) else y
-
-            # insert amino at new(?) position in grid
-            amino.x, amino.y = x, y
+            amino.x, amino.y = Amino.get_coordinates_at(prev, prev.direction)
             grid[amino.y, amino.x] = amino
             prev = amino
-        self.grid = grid
+        self.__grid = grid
+
+    @property
+    def grid(self) -> np.ndarray:
+        """A grid representing this amino as-if in a 2d Array,
+        with the x and y axis corrected to show the protein within bounds
+
+        Returns
+        -------
+        numpy.ndarray:
+            read-only 2d array, with the axis corrected to show the entire
+            protein within bounds
+
+        """
+        # retrieve smallest x and y coords
+        min_x, min_y = reduce(
+            lambda a, b: (min(a[0], b[0]), min(a[1], b[1])),
+            list(map(lambda a: (a.x, a.y), self.__aminos))
+        )
+
+        # correct grid representation
+        return np.roll(
+            self.__grid,
+            (min(min_y, 0) * -1, min(min_x, 0) * -1),
+            (0, 1)
+        )
 
     def append(self, amino: Amino) -> List[Amino]:
         """Adds a new Amino Acid to this Protein instance
@@ -154,7 +151,8 @@ class Protein:
         """
         amino.index = len(self.__aminos)
         self.__aminos.append(amino)
-        self.populate_grid(amino.index)
+        self.calculate_bonds(self.__aminos[amino.index:])
+        self.__populate_grid(amino.index)
         return self.aminos
 
     def fold(self, index: int, direction: int) -> Optional[List[Amino]]:
@@ -175,26 +173,88 @@ class Protein:
         """
         try:
             self.__aminos[index].direction = direction
-            self.populate_grid(index, True)
+            self.calculate_bonds(self.__aminos[index:])
+            self.__populate_grid(index, True)
 
             return self.aminos
         except IndexError:
             return None
 
+    def bordercontrol(self, x: int, y: int) -> bool:
+        # x  niet korten dan nul en langer dan het eiwit
+        return x >= 0 and y >= 0 and x < self.__len__() and y < self.__len__()
+
+    def empty_coordinate(self, x: int, y: int) -> bool:
+        return self.__grid[y, x] is None
+
+    def calculate_bonds(self, aminos: Sequence) -> Set[Tuple[Amino]]:
+        bonds = []
+
+        # loop through given list of aminos
+        for amino in aminos:
+            # don't process P aminos, aminos that already have a bond
+            # or the last amino
+            # (if it has a bond, that will have already been processed)
+            # and the 0 direction messes things up
+            if amino.type == "P" or amino.direction == 0:
+                continue
+
+            # get the directions to check
+            # and remove directions of the neighbours
+            directions = amino.foldoptions()
+            directions.remove(amino.direction)
+            prev = self.__aminos[amino.index-1] if amino.index > 0 else None
+            if prev and (prev.direction * -1) in directions:
+                directions.remove(prev.direction * -1)
+
+            print(directions)
+
+            print(
+                f"amino: {amino.type}{amino.index} " +
+                f"direction:{amino.direction}; valid directions:{directions}"
+            )
+
+            # loop through the remaining valid directions
+            for direction in directions:
+                # retrieve absolute coordinates at directions
+                x, y = Amino.get_coordinates_at(amino, direction)
+                # then, if the there's an amino at the coordinates
+                # that isn't a P amino...
+                if not self.empty_coordinate(x, y) and \
+                        self.__grid[y, x].type != "P":
+                    # set the bonded property of each respective
+                    # amino to their opposite, and add it the the set
+                    amino.bonded.add(self.__grid[y, x])
+                    self.__grid[y, x].bonded.add(amino)
+                    bond = AminoBond(amino, self.__grid[y, x])
+                    if bond not in bonds:
+                        bonds.append(AminoBond(amino, self.__grid[y, x]))
+        return bonds
+
     @property
-    def score(self):
-        pass
+    def score(self) -> int:
+        """Returns the score of this protein
 
-    def bordercontrol(self, x, y):
-        #x niet korten dan nul en langer dan proteine
-        if x >= 0 and y >= 0 and x < len(self.__len__()) and y < len(self.__len__()):
-            return True
-        else:
-            return False
-        
+        Returns
+        -------
+        int
+            the score of this protein, the smaller the better
+        """
+        score = 0
 
-    def empty_coordinate(self, x, y):
-        return self.grid[y, x] == None
+        # retrieve and loop through bonds
+        for bond in self.calculate_bonds(self.__aminos):
+            print(bond)
+            if bond.origin.type == bond.target.type and \
+                    bond.origin.type == "H":
+                score -= 1
+            elif bond.origin.type == bond.target.type and \
+                    bond.origin.type == "C":
+                score -= 5
+            elif bond.origin.type != "P" and bond.target.type != "P":
+                score -= 1
+
+        return score
 
     def __len__(self) -> int:
         """Returns the length of this protein
