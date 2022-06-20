@@ -1,6 +1,7 @@
 import random
 
-def random_folds(protein):
+
+def fold_randomly(protein):
     for index, amino in enumerate(protein.aminos[:-1]):
         options = protein.foldoptions(amino)
         for option in options:

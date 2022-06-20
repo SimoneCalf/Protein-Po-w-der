@@ -1,5 +1,5 @@
 from input_output import output
-from random_protein import random_folds
+from algorithms.random_protein import fold_randomly
 from classes.protein import Protein
 from visualization import visualize_protein
 
@@ -46,7 +46,7 @@ def create_protein() -> Protein:
 
 def main():
     protein = create_protein()
-    random_folds(protein)
+    fold_randomly(protein)
     output(protein)
     print(protein.grid)
     visualize_protein(protein)

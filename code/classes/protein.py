@@ -218,13 +218,6 @@ class Protein:
             if prev and (prev.direction * -1) in directions:
                 directions.remove(prev.direction * -1)
 
-            print(directions)
-
-            print(
-                f"amino: {amino.type}{amino.index} " +
-                f"direction:{amino.direction}; valid directions:{directions}"
-            )
-
             # loop through the remaining valid directions
             for direction in directions:
                 # retrieve absolute coordinates at directions
@@ -255,7 +248,6 @@ class Protein:
 
         # retrieve and loop through bonds
         for bond in self.calculate_bonds(self.__aminos):
-            print(bond)
             if bond.origin.type == bond.target.type and \
                     bond.origin.type == "H":
                 score -= 1

@@ -2,10 +2,12 @@
 import matplotlib.pyplot as plot
 from matplotlib.path import Path
 import matplotlib.patches as patches
+import pandas as pd
 
 # Local imports
 from classes.protein import Protein
 from classes.amino import Amino
+from algorithms.random_protein import fold_randomly
 
 
 def visualize_protein(prot: Protein):
@@ -114,7 +116,22 @@ def visualize_protein(prot: Protein):
     plot.show()
 
 
+def visualize_scores(prot_str: str):
+    scores = []
+    for i in range(1000):
+        prot = Protein(prot_str)
+        fold_randomly(prot)
+        scores.append(prot.score)
+
+    score_freq = pd.Series(scores).value_counts()
+    ax = score_freq.plot.barh(x="frequency", y="scores")
+    ax.set_xlabel("Frequency")
+    ax.set_ylabel("Score")
+    plot.show()
+
+
 if __name__ == "__main__":
     prot1 = Protein("HHPHPPPPH", [1, 2, -1, -1, 2, 2, 1, -2, 0])
     print(prot1.score)
     visualize_protein(prot1)
+    visualize_scores("HHPHHHPH")
