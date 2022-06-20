@@ -17,8 +17,3 @@ scores = score_freq.keys()
 frequencies = score_freq.values()
 ax.bar(scores, frequencies)
 plt.show()
-
-
-
-
-

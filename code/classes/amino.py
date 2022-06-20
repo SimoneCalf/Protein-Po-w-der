@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Tuple
 
 
 class Amino:
@@ -107,7 +107,7 @@ class Amino:
         return options
 
     @staticmethod
-    def get_coordinates_at(amino, direction: int) -> tuple[int, int]:
+    def get_coordinates_at(amino, direction: int) -> Tuple[int, int]:
         """Returns the coordinates of a point a given direction away from a
         given Amino.
 
@@ -138,7 +138,7 @@ class Amino:
 
         return (x, y)
 
-    def next(self) -> tuple[int, int]:
+    def next(self) -> Tuple[int, int]:
         """Returns the absolute coordinates this amino's direction is pointing to
 
         Returns
