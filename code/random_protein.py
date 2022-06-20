@@ -1,11 +1,11 @@
 import random
 
-def random(protein):
+def random_folds(protein):
     for index, amino in enumerate(protein.aminos):
         if index == -1:
             protein.fold(protein, index, 0)
         else:
-            options = amino.foldoptions
+            options = amino.foldoptions()
             for option in options:
                 if protein.bordercontrol(amino.x, amino.y) is not True:
                     options.remove(option)
@@ -13,6 +13,7 @@ def random(protein):
                 if protein.empty_coordinate(amino.x, amino.y) is not True:
                     options.remove(option)
 
-            protein.fold(protein, index, random.choice(options))
+            direction = random.choice(options)
+            protein.fold(index, direction)
     return
             
