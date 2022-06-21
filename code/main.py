@@ -5,7 +5,7 @@ from classes.protein import Protein
 from visualization import visualize_protein
 
 
-def create_protein() -> Protein:
+def create_protein(string: str = None) -> Protein:
     """Creates a protein based on user input
 
     Returns
@@ -14,6 +14,9 @@ def create_protein() -> Protein:
         The created protein
     """
     # ask user for the aminos and directions
+    if string:
+        return Protein(string)
+
     string = input("protein: ")
 
     print("Please also provide some optional directions, seperated by commas.")
@@ -53,11 +56,11 @@ def main():
     visualize_protein(protein)
 
     # do depth first fold
-    dff = DepthFirstFold("HHPHHHPH")
-    solution = dff.run(verbose=True)
+    dff = DepthFirstFold("HHPHHHPHPHHHPH")
+    solution = dff.run()
     print(solution)
     output(solution)
-    visualize_protein(solution)
+    visualize_protein(solution, True)
 
 
 if __name__ == "__main__":
