@@ -3,6 +3,7 @@ import matplotlib.pyplot as plot
 from matplotlib.path import Path
 import matplotlib.patches as patches
 import pandas as pd
+import os
 from typing import Any, Callable, Union
 
 # Local imports
@@ -11,7 +12,7 @@ from classes.amino import Amino
 from algorithms.random_protein import fold_randomly
 
 
-def visualize_protein(prot: Protein):
+def visualize_protein(prot: Protein, save_fig=False):
     """Visualizes a protein in matplotlib.
 
     Parameters
@@ -102,7 +103,7 @@ def visualize_protein(prot: Protein):
     ax.set_xlim(min(min_x, min_y)-.5, max(max_x, max_y)+.5)
     ax.set_ylim(min(min_x, min_y)-.5, max(max_x, max_y)+.5)
 
-    # voeg legende toe
+    # voeg legende en titel toe
     # zie:
     #   https://matplotlib.org/stable/tutorials/intermediate/legend_guide.html
     legend = [
@@ -112,6 +113,13 @@ def visualize_protein(prot: Protein):
     ]
 
     ax.legend(handles=legend)
+    fig.suptitle(prot.types)
+
+    # sla op in output als de vlag is meegegeven
+    if save_fig:
+        if not os.path.exists("data/"):
+            os.makedirs("data/")
+        plot.savefig(fname=f"{os.path.abspath('data/')}/{prot.types}.png")
 
     # laat het figuur zien
     plot.show()
@@ -138,16 +146,19 @@ def visualize_scores(
     matplotlib
     """
     scores = []
-    for i in range(1000):
+    for i in range(0, iter):
         prot = Protein(prot_str)
         algorithm(prot)
         scores.append(prot.score)
 
-    # see
     score_freq = pd.Series(scores).value_counts()
     ax = score_freq.plot.barh(x="frequency", y="scores")
     ax.set_xlabel("Frequency")
     ax.set_ylabel("Score")
+    ax.set_title(
+        f"Distribution of scores for '{prot.types}' "\
+        f"at {iter} iterations"
+    )
     plot.show()
 
 
