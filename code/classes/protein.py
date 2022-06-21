@@ -135,6 +135,14 @@ class Protein:
             (0, 1)
         )
 
+    @property
+    def types(self) -> str:
+        return "".join(map(lambda a: a.type, self.__aminos))
+
+    @property
+    def directions(self) -> Tuple[int, ...]:
+        return tuple(map(lambda a: a.direction, self.__aminos))
+
     def append(self, amino: Amino) -> List[Amino]:
         """Adds a new Amino Acid to this Protein instance
 
@@ -156,6 +164,9 @@ class Protein:
         return self.aminos
 
     def foldoptions(self, amino):
+        if amino is None:
+            return []
+
         if amino.index == 0:
             return [1]
         elif amino.index == 1:
@@ -259,6 +270,16 @@ class Protein:
 
         return score
 
+    def next_uninitialized(self):
+        return next(
+            (amino for amino in self.__aminos if amino.direction == 0),
+            None
+        )
+
+    @staticmethod
+    def copy(prot: 'Protein') -> 'Protein':
+        return Protein(prot.types, prot.directions)
+
     def __len__(self) -> int:
         """Returns the length of this protein
 
@@ -269,7 +290,7 @@ class Protein:
         """
         return len(self.__aminos)
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         """Represents this Protein instance as a string
 
         Returns

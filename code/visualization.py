@@ -3,6 +3,7 @@ import matplotlib.pyplot as plot
 from matplotlib.path import Path
 import matplotlib.patches as patches
 import pandas as pd
+from typing import Any, Callable, Union
 
 # Local imports
 from classes.protein import Protein
@@ -116,13 +117,33 @@ def visualize_protein(prot: Protein):
     plot.show()
 
 
-def visualize_scores(prot_str: str):
+def visualize_scores(
+        prot_str: str,
+        algorithm: Callable[[Union[str, Protein]], Any]
+        ) -> None:
+    """Assesses average performance of an algorithm and visualizes the results
+
+    Parameters
+    ----------
+    prot_str : str
+        string representing the protein to test the algorithm with
+    algorithm : Callable[[Union[str, Protein]], Any]
+        the algorithm to test
+
+
+    Notes
+    --------
+    See: `Datagy <https://datagy.io/python-count-occurrences-in-list/#Use_Pandas_to_Count_Number_of_Occurrences_in_a_Python_List>`_
+    for example of counting occurances with pandas, which goes nicely with
+    matplotlib
+    """
     scores = []
     for i in range(1000):
         prot = Protein(prot_str)
-        fold_randomly(prot)
+        algorithm(prot)
         scores.append(prot.score)
 
+    # see
     score_freq = pd.Series(scores).value_counts()
     ax = score_freq.plot.barh(x="frequency", y="scores")
     ax.set_xlabel("Frequency")
@@ -134,4 +155,4 @@ if __name__ == "__main__":
     prot1 = Protein("HHPHPPPPH", [1, 2, -1, -1, 2, 2, 1, -2, 0])
     print(prot1.score)
     visualize_protein(prot1)
-    visualize_scores("HHPHHHPH")
+    visualize_scores("HHPHHHPH", fold_randomly)

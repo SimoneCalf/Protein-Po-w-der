@@ -46,9 +46,9 @@ def create_protein() -> Protein:
 
 def main():
     protein = create_protein()
+    print("Random: ")
     fold_randomly(protein)
     output(protein)
-    print(protein.grid)
     visualize_protein(protein)
 
 
