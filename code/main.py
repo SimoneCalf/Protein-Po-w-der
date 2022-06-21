@@ -1,5 +1,6 @@
 from input_output import output
 from algorithms.random_protein import fold_randomly
+from algorithms.depth_first import DepthFirstFold
 from classes.protein import Protein
 from visualization import visualize_protein
 
@@ -51,6 +52,12 @@ def main():
     output(protein)
     visualize_protein(protein)
 
+    # do depth first fold
+    dff = DepthFirstFold("HHPHHHPH")
+    solution = dff.run(verbose=True)
+    print(solution)
+    output(solution)
+    visualize_protein(solution)
 
 if __name__ == "__main__":
     main()

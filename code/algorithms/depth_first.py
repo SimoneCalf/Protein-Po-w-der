@@ -4,15 +4,7 @@ import time
 import threading
 import sys
 
-
-import os
-
-p = os.path.abspath("code")
-sys.path.insert(0, p)
-
-from classes.protein import Protein # noqa E261
-from visualization import visualize_protein # noqa E261
-from input_output import output # noqa E261
+from classes.protein import Protein
 
 
 class DepthFirstFold():
@@ -121,10 +113,3 @@ class DepthFirstFold():
         if verbose:
             self.log(f"Best solution: {self.best.score}", end=True)
         return self.best
-
-
-if __name__ == "__main__":
-    dff = DepthFirstFold("PPPHHPPHHPPPPPHHHHHHHPPHHPPPPHHPPHPP")
-    solution = dff.run(verbose=True)
-    output(solution)
-    visualize_protein(solution)

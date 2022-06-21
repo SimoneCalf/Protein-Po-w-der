@@ -14,6 +14,6 @@ def output(protein):
         for amino in protein.aminos:
             writer.writerow([amino.index, amino.type, amino.direction])
 
-        writer.writerow(["score", 0])
+        writer.writerow(["score", protein.score])
 
     return
