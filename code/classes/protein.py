@@ -1,4 +1,4 @@
-from typing import List, Optional, Sequence, Set, Tuple
+from typing import List, Optional, Sequence, Set, Tuple, Union
 from functools import reduce
 import numpy as np
 
@@ -163,7 +163,23 @@ class Protein:
         self.__populate_grid(amino.index)
         return self.aminos
 
-    def foldoptions(self, amino):
+    def foldoptions(self, amino: Amino) -> List[int]:
+        """Returns the valid fold directions for an amino
+
+        Fold possibilities are based on the amino index and/or the direction
+        of the previous amino (we cannot fold back on ourselves)
+
+        Parameters
+        ----------
+        amino : Amino
+            the amino to retrieve fold possibilities from
+
+        Returns
+        -------
+        List[int, ...]
+            a list containing the possible fold directions
+
+        """
         if amino is None:
             return []
 
@@ -270,14 +286,35 @@ class Protein:
 
         return score
 
-    def next_uninitialized(self):
+    def next_uninitialized(self) -> Union[Amino, None]:
+        """Returns the next uninitialized amino in the protein
+
+        Returns
+        -------
+        Union[Amino,None]
+            returns the closest amino with a direction of 0,
+            or None if none are left (except the last)
+        """
         return next(
-            (amino for amino in self.__aminos if amino.direction == 0),
+            (amino for amino in self.__aminos[:-1] if amino.direction == 0),
             None
         )
 
     @staticmethod
     def copy(prot: 'Protein') -> 'Protein':
+        """Copies a protein to a new instance
+
+        Parameters
+        ----------
+        prot : Protein
+            the protein to copy
+
+        Returns
+        -------
+        Protein
+            a new Protein instance, initialised with the same data as the
+            given protein
+        """
         return Protein(prot.types, prot.directions)
 
     def __len__(self) -> int:

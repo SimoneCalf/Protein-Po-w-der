@@ -1,6 +1,7 @@
 import csv
 import os
 
+
 def output(protein):
     # create dir if it does not already exist
     if not os.path.exists("data/"):

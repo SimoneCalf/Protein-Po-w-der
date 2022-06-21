@@ -59,5 +59,6 @@ def main():
     output(solution)
     visualize_protein(solution)
 
+
 if __name__ == "__main__":
     main()
