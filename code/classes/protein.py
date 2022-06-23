@@ -240,7 +240,8 @@ class Protein:
             # get the directions to check
             # and remove directions of the neighbours
             directions = self.foldoptions(amino)
-            directions.remove(amino.direction)
+            if amino.direction in directions:
+                directions.remove(amino.direction)
             prev = self.__aminos[amino.index-1] if amino.index > 0 else None
             if prev and (prev.direction * -1) in directions:
                 directions.remove(prev.direction * -1)

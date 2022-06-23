@@ -1,20 +1,38 @@
 import random
+from classes.protein import Protein
+from classes.amino import Amino
+
+#  def fold_randomly(protein):
+#      for amino in (amino for amino in protein.aminos[:-1] if amino.direction == 0):
+#          options = protein.foldoptions(amino)
+#          for option in options:
+#              if protein.empty_coordinate(amino, option) is False:
+#                  options.remove(option)
+#
+#          direction = random.choice(options)
+#          protein.fold(amino.index, direction)
+#
+#      return
 
 
-def fold_randomly(protein):
-    for amino in (amino for amino in protein.aminos[:-1] if amino.direction == 0):
-        options = protein.foldoptions(amino)
-        for option in options:
-            if protein.empty_coordinate(amino, option) is False:
-                options.remove(option)
+def fold_randomly(
+        protein: Protein,
+        prev: Amino,
+        faulty_direction: int = None):
+    """Folds a protein in a random direction at every amino
 
-        direction = random.choice(options)
-        protein.fold(amino.index, direction)
+    Parameters
+    ----------
+    protein : Protein
+        the protein to fold randomly
+    prev : Amino
+        the previous amino, should be the first amino uninitialized amino on the
+        first call
+    faulty_direction : int, optional
+        a direction to be pruned from the options to choose from when,
+        backtracking by default None
+    """
 
-    return
-
-
-def fold_randomly(protein, prev, faulty_direction=None):
     # retrieve next uninitialized amino
     curr = protein.next_uninitialized()
 
@@ -30,19 +48,15 @@ def fold_randomly(protein, prev, faulty_direction=None):
     for option in options:
         if protein.empty_coordinate(curr, option) is False:
             options.remove(option)
-        
+
     if not options:
         faulty_direction = prev.direction
         prev.direction = 0
-        fold_randomly(protein, protein.aminos[prev.index - 1], faulty_direction)
+        fold_randomly(
+            protein,
+            protein.aminos[prev.index - 1] if prev.index > 0 else 0,
+            faulty_direction)
     else:
         direction = random.choice(options)
         protein.fold(curr.index, direction)
         fold_randomly(protein, curr)
-    
-    
-    
-
-
-
-    
