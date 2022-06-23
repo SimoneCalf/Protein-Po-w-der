@@ -51,7 +51,7 @@ def create_protein(string: str = None) -> Protein:
 def main():
     protein = create_protein()
     print("Random: ")
-    fold_randomly(protein)
+    fold_randomly(protein, prev=protein.aminos[0])
     output(protein)
     visualize_protein(protein)
 
