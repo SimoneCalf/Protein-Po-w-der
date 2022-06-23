@@ -6,7 +6,7 @@ if __name__ == "__main__":
     test_prot = Protein("HPHHHHHPPPPPP", (2, 2, 1, 1, -2, -2, -1, 2))
     print(test_prot)
     visualize_protein(test_prot)
-    fold_randomly(test_prot, prev=test_prot.next_uninitialized())
+    fold_randomly(test_prot, prev=test_prot.aminos[7])
     print(test_prot)
     print(test_prot.grid)
     visualize_protein(test_prot)

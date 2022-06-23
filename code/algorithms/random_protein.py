@@ -45,16 +45,18 @@ def fold_randomly(
     if faulty_direction:
         options.remove(faulty_direction)
 
+    picked = None
     for option in options:
-        if protein.empty_coordinate(curr, option) is False:
-            options.remove(option)
+        if protein.empty_coordinate(curr, option):
+            picked = option
 
-    if not options:
+    if not picked:
         faulty_direction = prev.direction
         prev.direction = 0
         fold_randomly(
             protein,
-            protein.aminos[prev.index - 1] if prev.index > 0 else 0,
+            protein.aminos[prev.index - 1] \
+                if prev.index > 0 else protein.aminos[0],
             faulty_direction)
     else:
         direction = random.choice(options)
