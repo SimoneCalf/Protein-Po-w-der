@@ -127,7 +127,7 @@ def visualize_protein(prot: Protein, save_fig=False):
 
 def visualize_scores(
         prot_str: str,
-        algorithm: Callable[[Union[str, Protein]], Any]
+        algorithm: Callable[[Union[str, Protein]], Any], iterations = 100
         ) -> None:
     """Assesses average performance of an algorithm and visualizes the results
 
@@ -146,18 +146,18 @@ def visualize_scores(
     matplotlib
     """
     scores = []
-    for i in range(0, iter):
+    for i in range(0, iterations):
         prot = Protein(prot_str)
         algorithm(prot)
         scores.append(prot.score)
 
     score_freq = pd.Series(scores).value_counts()
-    ax = score_freq.plot.barh(x="frequency", y="scores")
+    ax = score_freq.plot.bar(x="frequency", y="scores")
     ax.set_xlabel("Frequency")
     ax.set_ylabel("Score")
     ax.set_title(
         f"Distribution of scores for '{prot.types}' "\
-        f"at {iter} iterations"
+        f"at {iterations} iterations"
     )
     plot.show()
 
