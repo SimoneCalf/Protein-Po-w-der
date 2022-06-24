@@ -8,5 +8,4 @@ if __name__ == "__main__":
     visualize_protein(test_prot)
     fold_randomly(test_prot, prev=test_prot.aminos[7])
     print(test_prot)
-    print(test_prot.grid)
     visualize_protein(test_prot)
