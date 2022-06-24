@@ -3,6 +3,7 @@ from algorithms.random_protein import fold_randomly
 from algorithms.depth_first import DepthFirstFold
 from classes.protein import Protein
 from visualization import visualize_protein
+from algorithms.hillclimber import hillclimber
 
 
 def create_protein(string: str = None) -> Protein:
@@ -49,11 +50,11 @@ def create_protein(string: str = None) -> Protein:
 
 
 def main():
-    protein = create_protein()
-    print("Random: ")
-    fold_randomly(protein, prev=protein.aminos[0])
-    output(protein)
-    visualize_protein(protein)
+    # protein = create_protein()
+    # print("Random: ")
+    # fold_randomly(protein, prev=protein.aminos[0])
+    # output(protein)
+    # visualize_protein(protein)
 
     # do depth first fold
     dff = DepthFirstFold("HHPHHHPHPHH")
@@ -61,6 +62,13 @@ def main():
     print(solution)
     output(solution)
     visualize_protein(solution, True)
+    
+    hcb = hillclimber("HHPHHHPHPHH")
+    solution = hcb.run()
+    print(solution)
+    output(solution)
+    visualize_protein(solution, True)
+
 
 
 if __name__ == "__main__":
