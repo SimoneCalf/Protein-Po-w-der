@@ -95,7 +95,8 @@ class Protein:
         # otherwise, we leave any items BEFORE the index untouched
         if not in_place:
             for amino in self.__aminos[:index+1]:
-                grid[amino.y, amino.x] = amino
+                if grid[amino.y, amino.x] is None:
+                    grid[amino.y, amino.x] = amino
 
         prev = self.__aminos[index]
         for amino in self.__aminos[index+1:]:
@@ -106,7 +107,8 @@ class Protein:
                 grid[amino.y, amino.x] = None
 
             amino.x, amino.y = Amino.get_coordinates_at(prev, prev.direction)
-            grid[amino.y, amino.x] = amino
+            if grid[amino.y, amino.x] is None:
+                grid[amino.y, amino.x] = amino
             prev = amino
         self.__grid = grid
 
