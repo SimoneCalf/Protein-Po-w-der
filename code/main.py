@@ -3,7 +3,7 @@ from algorithms.random_protein import fold_randomly
 from algorithms.depth_first import DepthFirstFold
 from classes.protein import Protein
 from visualization import visualize_protein
-from algorithms.hillclimber import hillclimber
+from algorithms.hillclimber import HillClimber
 
 
 def create_protein(string: str = None) -> Protein:
@@ -62,13 +62,12 @@ def main():
     print(solution)
     output(solution)
     visualize_protein(solution, True)
-    
-    hcb = hillclimber("HHPHHHPHPHH")
+
+    hcb = HillClimber("HHPHHHPHPHH")
     solution = hcb.run()
     print(solution)
     output(solution)
     visualize_protein(solution, True)
-
 
 
 if __name__ == "__main__":
