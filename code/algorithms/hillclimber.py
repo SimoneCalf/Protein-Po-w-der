@@ -33,6 +33,7 @@ class HillClimber():
                 f"Unsupported type {type(prot)}," +
                 f"must be of type '{str}' or '{Protein}'"
             )
+        self.best = self.protein
 
     @property
     def protein(self) -> Protein:
@@ -108,13 +109,24 @@ class HillClimber():
         return random.choice(protein.aminos[:-1])
 
     # gebruiken om het algoritme te starten
-    def run(self, iterations: int = 1000) -> Protein:
+    def run(
+        self,
+        repeat: int = 10,
+        iterations: int = 1000,
+        verbose: bool = False
+    ) -> Protein:
         """Actually starts the hillclimber algorithm
 
         Parameters
         ----------
+        repeat : int, optional:
+            the amount of times the algorithm creates a new starting point
+            from which to start mutating the protein, by default 10
         iterations : int, optional
-            the amount of times to mutate the protein, by default 1000
+            the amount of times to mutate the protein, by default 500
+        verbose : bool, optional:
+            flag that controls whether to execute logging statements or not,
+            by default False
 
         Returns
         -------
@@ -123,19 +135,28 @@ class HillClimber():
             of the given protein, folded in the shape of the best approximated
             solution
         """
-        for i in range(0, iterations):
+        for _ in range(0, repeat):
             start = self.get_starting_point(self.protein)
-            # random vouwen
-            # foldpoint is een amino object
-            new_state = None
-            while new_state is None:
-                foldpoint = self.get_random_amino(start)
-                new_state = self.fold_one_amino_acid(start, foldpoint)
-                if not Protein.validate(new_state):
-                    new_state = None
+            for i in range(0, iterations):
+                # random vouwen
+                # foldpoint is een amino object
+                new_state = None
+                while new_state is None:
+                    foldpoint = self.get_random_amino(start)
+                    new_state = self.fold_one_amino_acid(start, foldpoint)
+                    if not Protein.validate(new_state):
+                        new_state = None
+                # score vergelijken
+                if start.score >= new_state.score:
+                    start = Protein.copy(new_state)
+                # beste vouwing eitwit opslaan
 
-            # score vergelijken
-            if start.score >= new_state.score:
-                self.__protein = new_state
-            # beste vouwing eitwit opslaan
-        return self.__protein
+            if self.best.score >= start.score:
+                if verbose:
+                    print(
+                        f"Improved {self.best.score} by " +
+                        f"{self.best.score - start.score} to {start.score}"
+                    )
+                self.best = Protein.copy(start)
+
+        return self.best

@@ -68,8 +68,8 @@ def main():
     output(solution)
     visualize_protein(solution, True)
 
-    hcb = HillClimber("HHPHHHPHPHH")
-    solution = hcb.run()
+    hcb = HillClimber("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
+    solution = hcb.run(repeat=20, iterations=500, verbose=True)
     print(solution)
     output(solution)
     visualize_protein(solution, True)
