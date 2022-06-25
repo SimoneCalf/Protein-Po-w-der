@@ -1,51 +1,15 @@
 from typing import Union
-from algorithms.random_protein import fold_randomly
-from classes.protein import Protein
-from classes.amino import Amino
 import random
 
+from classes.protein import Protein
+from classes.amino import Amino
+from algorithms.BaseAlgorithm import BaseAlgorithm
+from algorithms.random_protein import fold_randomly
 
-class HillClimber():
+
+class HillClimber(BaseAlgorithm):
     """A Hill Climber algorithm for folding proteins
     """
-    def __init__(self, prot: Union[Protein, str]) -> None:
-        """Constructor method
-
-        Parameters
-        ----------
-        prot : Union[Protein, str]
-            the protein to fold; can either be a Protein instance or a string
-            of amino types to represent a protein
-
-        Raises
-        ------
-        TypeError
-            raises a TypeError when the given parameter is neither a Protein
-            instance or a string
-        """
-        # create protein from string if string was given
-        if type(prot) == str:
-            self.__protein = Protein(prot)
-        elif type(prot) == Protein:
-            self.__protein = Protein.copy(prot)
-        else:
-            raise TypeError(
-                f"Unsupported type {type(prot)}," +
-                f"must be of type '{str}' or '{Protein}'"
-            )
-        self.best = self.protein
-
-    @property
-    def protein(self) -> Protein:
-        """Returns a new Protein instance of the protein property
-
-        Returns
-        -------
-        Protein
-            a copy of the protein instance property
-        """
-        return Protein.copy(self.__protein)
-
     def get_starting_point(self, protein: Protein) -> Protein:
         """Returns a randomly folded copy of the given protein
 
@@ -135,9 +99,17 @@ class HillClimber():
             of the given protein, folded in the shape of the best approximated
             solution
         """
-        for _ in range(0, repeat):
+        for s in range(0, repeat):
             start = self.get_starting_point(self.protein)
-            for i in range(0, iterations):
+            no_improvement = i = 0
+            # ga zolang door tot er n keer geen verbetering is gevonden
+            while no_improvement <= iterations:
+                if verbose:
+                    self.log(
+                        f"run: {s}; iteration {i}," +
+                        f"no improvement: {no_improvement};" +
+                        f"score: {start.score}"
+                    )
                 # random vouwen
                 # foldpoint is een amino object
                 new_state = None
@@ -146,11 +118,27 @@ class HillClimber():
                     new_state = self.fold_one_amino_acid(start, foldpoint)
                     if not Protein.validate(new_state):
                         new_state = None
-                # score vergelijken
+
+                # vergelijk de score, als er een verbetering is gevonden dan
+                # slaan we die op en resetten we de counter
+
                 if start.score >= new_state.score:
                     start = Protein.copy(new_state)
-                # beste vouwing eitwit opslaan
 
+                    if start.score > new_state.score:
+                        no_improvement = 0
+                        continue
+
+                # als er geen verbetering is gevonden dan verhogen we de
+                # counter
+                no_improvement += 1
+
+                i += 1
+
+            # als we n-keer geen verbetering hebben gevonden dan hebben we
+            # een lokaal maximum behaald,
+            # als dit beter is dan ons vorige resultaat dan slaan we het op
+            # en gaan we nog een keer verder
             if self.best.score >= start.score:
                 if verbose:
                     print(
