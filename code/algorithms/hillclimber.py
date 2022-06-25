@@ -1,4 +1,3 @@
-from typing import Union
 import random
 
 from classes.protein import Protein
@@ -87,7 +86,8 @@ class HillClimber(BaseAlgorithm):
             the amount of times the algorithm creates a new starting point
             from which to start mutating the protein, by default 10
         iterations : int, optional
-            the amount of times to mutate the protein, by default 500
+            the amount of times to mutate the protein after hitting a local
+            minimum, by default 500
         verbose : bool, optional:
             flag that controls whether to execute logging statements or not,
             by default False
@@ -99,16 +99,21 @@ class HillClimber(BaseAlgorithm):
             of the given protein, folded in the shape of the best approximated
             solution
         """
+
+        # safeguard giving repeat 0 or iterations 0
+        repeat, iterations = max(1, repeat), max(1, iterations)
+
         for s in range(0, repeat):
             start = self.get_starting_point(self.protein)
-            no_improvement = i = 0
+            i, no_improvement = 0, 0
             # ga zolang door tot er n keer geen verbetering is gevonden
             while no_improvement <= iterations:
                 if verbose:
                     self.log(
-                        f"run: {s}; iteration {i}," +
-                        f"no improvement: {no_improvement};" +
-                        f"score: {start.score}"
+                        f"run: {s}; iteration {i}; " +
+                        f" iterations with no improvement: {no_improvement}; "
+                        + f"score: {start.score}",
+                        start=True
                     )
                 # random vouwen
                 # foldpoint is een amino object
@@ -136,15 +141,20 @@ class HillClimber(BaseAlgorithm):
                 i += 1
 
             # als we n-keer geen verbetering hebben gevonden dan hebben we
-            # een lokaal maximum behaald,
+            # een lokaal minimum behaald,
             # als dit beter is dan ons vorige resultaat dan slaan we het op
             # en gaan we nog een keer verder
             if self.best.score >= start.score:
                 if verbose:
-                    print(
+                    self.log(
                         f"Improved {self.best.score} by " +
-                        f"{self.best.score - start.score} to {start.score}"
+                        f"{self.best.score - start.score} to {start.score}",
                     )
                 self.best = Protein.copy(start)
 
+        if verbose:
+            self.log(
+                f"Best solution: {self.best}; score: {self.best.score}",
+                end=True
+            )
         return self.best

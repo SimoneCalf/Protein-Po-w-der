@@ -44,9 +44,8 @@ class BaseAlgorithm():
         """
         def loglisten(q):
             while True:
-                if self.__log:
-                    sys.stdout.flush()
-                    print(self.__log.popleft(), end="\r")
+                if q:
+                    print(q.popleft(), end="\033[K\r", flush=True)
                 else:
                     break
                 time.sleep(.05)
@@ -57,7 +56,7 @@ class BaseAlgorithm():
             self.__thread = threading.Thread(
                 target=loglisten,
                 daemon=True,
-                args=(self.log,)
+                args=(self.__log,)
             )
             self.__thread.start()
         # stop if a thread exists and the flag was set
