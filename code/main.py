@@ -1,3 +1,4 @@
+from typing import Union
 from input_output import output
 from algorithms.random_protein import fold_randomly
 from algorithms.depth_first import DepthFirstFold
@@ -6,19 +7,22 @@ from visualization import visualize_protein
 from algorithms.hillclimber import HillClimber
 
 
-def create_protein(string: str = None) -> Protein:
+def create_protein(string: str = None) -> Union[Protein, None]:
     """Creates a protein based on user input
 
     Returns
     -------
-    Protein
-        The created protein
+    Union[Protein, None]:
+        The created protein if user protein was given, None otherwise
     """
     # ask user for the aminos and directions
     if string:
         return Protein(string)
 
     string = input("protein: ")
+
+    if not string:
+        return None
 
     print("Please also provide some optional directions, seperated by commas.")
     while True:
@@ -50,11 +54,12 @@ def create_protein(string: str = None) -> Protein:
 
 
 def main():
-    # protein = create_protein()
-    # print("Random: ")
-    # fold_randomly(protein, prev=protein.aminos[0])
-    # output(protein)
-    # visualize_protein(protein)
+    protein = create_protein()
+    if protein:
+        print("Random: ")
+        fold_randomly(protein, prev=protein.aminos[0])
+        output(protein)
+        visualize_protein(protein)
 
     # do depth first fold
     dff = DepthFirstFold("HHPHHHPHPHH")

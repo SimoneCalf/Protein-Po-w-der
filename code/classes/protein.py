@@ -163,7 +163,10 @@ class Protein:
         self.__populate_grid(amino.index)
         return self.aminos
 
-    def foldoptions(self, amino: Amino) -> List[int]:
+    def foldoptions(
+            self,
+            amino: Amino,
+            completely_random: bool = False) -> List[int]:
         """Returns the valid fold directions for an amino
 
         Fold possibilities are based on the amino index and/or the direction
@@ -173,6 +176,10 @@ class Protein:
         ----------
         amino : Amino
             the amino to retrieve fold possibilities from
+        completely_random: bool, optional
+            whether to return a completely random choice
+            if this is set to True it does not optimize the choices for
+            the first and second aminos, default is False
 
         Returns
         -------
@@ -183,9 +190,9 @@ class Protein:
         if amino is None:
             return []
 
-        if amino.index == 0:
+        if not completely_random and amino.index == 0:
             return [1]
-        elif amino.index == 1:
+        elif not completely_random and amino.index == 1:
             return [1, 2]
 
         prev = self.__aminos[amino.index-1] if amino.index > 0 else None

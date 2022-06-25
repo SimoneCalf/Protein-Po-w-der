@@ -82,7 +82,7 @@ class HillClimber():
             but folded in a random valid direction at the given amino
         """
         protein = Protein.copy(protein)
-        foldoptions = protein.foldoptions(amino)
+        foldoptions = protein.foldoptions(amino, completely_random=True)
         foldoptions[:] =\
             [option for option in foldoptions if
                 protein.empty_coordinate(amino, option)]
