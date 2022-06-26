@@ -62,17 +62,27 @@ def main():
         visualize_protein(protein)
 
     # do depth first fold
-    dff = DepthFirstFold("HHPHHHPHPHH")
+    dff = DepthFirstFold("PPCHHPPCHPPPPCHHHHCHHPPHHPPPPHHPPHPP")
+    print("Starting Depth First Fold...")
     solution = dff.run()
     print(solution)
     output(solution)
-    visualize_protein(solution, True)
+    visualize_protein(
+        solution,
+        save_fig=True,
+        save_fig_filename=f"{dff.__class__.__name__}.png"
+    )
 
     hcb = HillClimber("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
-    solution = hcb.run(repeat=20, iterations=500, verbose=True)
+    print("Starting Hill Climber")
+    solution = hcb.run(repeat=20, iterations=250, verbose=True)
     print(solution)
     output(solution)
-    visualize_protein(solution, True)
+    visualize_protein(
+        solution,
+        save_fig=True,
+        save_fig_filename=f"{hcb.__class__.__name__}{solution.types}"
+    )
 
 
 if __name__ == "__main__":

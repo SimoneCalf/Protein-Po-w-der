@@ -11,23 +11,36 @@ from classes.protein import Protein
 from classes.amino import Amino
 
 
-def visualize_protein(prot: Protein, save_fig=False):
+def visualize_protein(
+            prot: Protein,
+            save_fig: bool = False,
+            save_fig_dir: Union[str, bytes] = "data/",
+            save_fig_filename: Union[str, bytes] = ""
+        ):
     """Visualizes a protein in matplotlib.
 
     Parameters
     ----------
     prot : Protein
         the protein instance to visualize
+    save_fig: bool, optional
+        whether to save the figure to a file
+    save_fig_dir : Union[str, bytes], optional
+        the path to save the figure to, if the save_fig flag is set,
+        by default 'data/' in the current working directory
+    save_fig_filename : Union[str, bytes]
+        the filename to save the figure to, if the save_fig flag is set,
+        by default it is set to a string of amino types of the given protein
+        followed by the file extension '.png'
 
     See Also
     --------
-    .. _Path tutorial:
-        https://matplotlib.org/stable/tutorials/advanced/path_tutorial.html
+    .. `Path tutorial
+        <https://matplotlib.org/stable/tutorials/advanced/path_tutorial.html>`
 
     To Do
     -----
-    - Center figure `example https://stackoverflow.com/a/4718438`
-    - Add H-bonds and score
+    - Center figure `example <https://stackoverflow.com/a/4718438>`
 `    """
 
     points = [(0.0, 0.0)]
@@ -132,9 +145,29 @@ def visualize_protein(prot: Protein, save_fig=False):
 
     # sla op in output als de vlag is meegegeven
     if save_fig:
-        if not os.path.exists("data/"):
-            os.makedirs("data/")
-        plot.savefig(fname=f"{os.path.abspath('data/')}/{prot.types}.png")
+        cwd = os.path.abspath()
+
+        # create path if needed
+        # see https://stackoverflow.com/a/44319629/8571352
+        path =\
+            str(save_fig_dir, "utf-8") if type(save_fig_dir) == bytes \
+            else save_fig_dir if save_fig_dir else "data/"
+
+        if not os.path.exists(f"{cwd}/{save_fig_dir}"):
+            os.makedirs(f"{cwd}/{save_fig_dir}")
+
+        # process filename
+        filename =\
+            "{file}.png".format(
+                file=str(save_fig_filename, "utf-8").replace(".png", "")
+            )\
+            if type(save_fig_filename) == bytes \
+            else "{file}.png".format(file=save_fig_filename.replace(".png")) \
+            if save_fig_filename \
+            else f"{prot.types}.png"
+
+        # save file
+        plot.savefig(f"{cwd}/{path}/{filename}")
 
     # laat het figuur zien
     plot.show()
