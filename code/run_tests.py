@@ -1,3 +1,4 @@
+from test.test_protein import ProteinTest
 from test.test_random import RandomTest
 import unittest
 
