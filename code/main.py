@@ -81,7 +81,7 @@ def main():
     visualize_protein(
         solution,
         save_fig=True,
-        save_fig_filename=f"{hcb.__class__.__name__}{solution.types}"
+        save_fig_filename=f"{hcb.__class__.__name__}_{solution.types}"
     )
 
 
