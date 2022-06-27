@@ -3,7 +3,7 @@ from classes.protein import Protein
 from algorithms.greedy import greedy
 
 if __name__ == "__main__":
-    test_prot = Protein("HHPHPHPHHHHPPP", [1, 2])
+    test_prot = Protein("HHHHHHHPPP", [1, 2])
     print(test_prot)
     visualize_protein(test_prot)
     greedy(test_prot, prev=test_prot.aminos[1])
