@@ -1,4 +1,4 @@
-import random
+from random import choice as random_choice, random as random_random
 
 from classes.protein import Protein
 from classes.amino import Amino
@@ -52,7 +52,7 @@ class HillClimber(BaseAlgorithm):
                 protein.empty_coordinate(amino, option)]
         if not foldoptions:
             return None
-        direction = random.choice(foldoptions)
+        direction = random_choice(foldoptions)
         protein.fold(amino.index, direction)
         return protein
 
@@ -69,7 +69,7 @@ class HillClimber(BaseAlgorithm):
         Amino
             Returns the instance of the randomly selected amino
         """
-        return random.choice(protein.aminos[:-1])
+        return random_choice(protein.aminos[:-1])
 
     # gebruiken om het algoritme te starten
     def run(
