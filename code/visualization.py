@@ -145,8 +145,8 @@ def visualize_protein(
 
     # sla op in output als de vlag is meegegeven
     if save_fig:
-        cwd = os.path.abspath()
-
+        cwd = os.getcwd()
+        
         # create path if needed
         # see https://stackoverflow.com/a/44319629/8571352
         path =\
