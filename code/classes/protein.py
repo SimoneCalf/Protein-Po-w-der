@@ -224,7 +224,7 @@ class Protein:
         try:
             self.__aminos[index].direction = direction
             self.calculate_bonds(self.__aminos[index:])
-            self.__populate_grid()
+            self.__populate_grid(index)
 
             return self.aminos
         except IndexError:
