@@ -54,5 +54,6 @@ def greedy(
         print(f"minimum: {minimum}")
         direction = options[random.choice(minimum)]
         protein.fold(curr.index, direction)
+        print(protein.grid)
         visualize_protein(protein)
         greedy(protein, curr)
