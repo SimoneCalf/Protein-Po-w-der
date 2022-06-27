@@ -62,7 +62,7 @@ def main():
         visualize_protein(protein)
 
     # do depth first fold
-    dff = DepthFirstFold("PPCHHPPCHPPPPCHHHHCHHPPHHPPPPHHPPHPP")
+    dff = DepthFirstFold("HHPHHHPHPHHHPH")
     print("Starting Depth First Fold...")
     solution = dff.run()
     print(solution)

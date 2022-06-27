@@ -145,7 +145,7 @@ def visualize_protein(
 
     # sla op in output als de vlag is meegegeven
     if save_fig:
-        cwd = os.path.abspath()
+        cwd = os.getcwd()
 
         # create path if needed
         # see https://stackoverflow.com/a/44319629/8571352
@@ -162,7 +162,7 @@ def visualize_protein(
                 file=str(save_fig_filename, "utf-8").replace(".png", "")
             )\
             if type(save_fig_filename) == bytes \
-            else "{file}.png".format(file=save_fig_filename.replace(".png")) \
+            else "{file}.png".format(file=save_fig_filename.replace(".png", "")) \
             if save_fig_filename \
             else f"{prot.types}.png"
 
