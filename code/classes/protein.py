@@ -243,7 +243,7 @@ class Protein:
             # or the last amino
             # (if it has a bond, that will have already been processed)
             # and the 0 direction messes things up
-            if amino.type == "P" or amino.direction == 0:
+            if amino.type != "H" and amino.type != "C" or amino.direction == 0:
                 continue
 
             # get the directions to check
@@ -261,15 +261,16 @@ class Protein:
                 x, y = Amino.get_coordinates_at(amino, direction)
                 # then, if the there's an amino at the coordinates
                 # that isn't a P amino...
-                if not self.empty_coordinate(amino, direction) and \
-                        self.__grid[y, x].type != "P":
+                if not self.empty_coordinate(amino, direction):
                     # set the bonded property of each respective
                     # amino to their opposite, and add it the the set
-                    amino.bonded.add(self.__grid[y, x])
-                    self.__grid[y, x].bonded.add(amino)
-                    bond = AminoBond(amino, self.__grid[y, x])
-                    if bond not in bonds:
-                        bonds.append(AminoBond(amino, self.__grid[y, x]))
+                    target = self.__grid[y, x]
+                    if target.type == "H" or target.type == "P":
+                        amino.bonded.add(target)
+                        self.__grid[y, x].bonded.add(amino)
+                        bond = AminoBond(amino, target)
+                        if bond not in bonds:
+                            bonds.append(AminoBond(amino, target))
         return bonds
 
     @property

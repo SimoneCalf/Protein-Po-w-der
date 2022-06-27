@@ -24,7 +24,7 @@ def fold_randomly(
         backtracking, by default []
 
     See Also:
-        `https://www.geeksforgeeks.org/python-handling-recursion-limit/ <GFG>`
+        `GFG <https://www.geeksforgeeks.org/python-handling-recursion-limit/>`
         for credit for the code for increasing the recursion count
     """
 
