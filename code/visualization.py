@@ -9,7 +9,6 @@ from typing import Any, Callable, Union
 # Local imports
 from classes.protein import Protein
 from classes.amino import Amino
-from algorithms.random_protein import fold_randomly
 
 
 def visualize_protein(prot: Protein, save_fig=False):
@@ -41,11 +40,11 @@ def visualize_protein(prot: Protein, save_fig=False):
         x, y = points[len(points)-1]
 
         # creëer cirkel
-        amino_circle = plot.Circle(
-            (x, y),
-            .10,
-            color="{}".format("red" if amino.type == "H" else "blue")
-        )
+        color =\
+            "orange" if amino.type == "H" else "#50C878" if amino.type == "C" \
+            else "#0096FF"
+
+        amino_circle = plot.Circle((x, y), .15, color=f"{color}")
         circles.append(amino_circle)
 
         # teken geen lijn als we bij de laatste amino zijn
@@ -99,6 +98,18 @@ def visualize_protein(prot: Protein, save_fig=False):
     for circle in circles:
         ax.add_patch(circle)
 
+    # voeg de labels toe
+    for amino, circle in zip(prot.aminos, circles):
+        x, y = circle.center
+        ax.text(
+            x,
+            y,
+            f"{amino.type}{amino.index}",
+            ha="center",
+            va="center",
+            color="#FFF5EE",
+            fontsize=8)
+
     # zet de x en y axis
     ax.set_xlim(min(min_x, min_y)-.5, max(max_x, max_y)+.5)
     ax.set_ylim(min(min_x, min_y)-.5, max(max_x, max_y)+.5)
@@ -107,10 +118,14 @@ def visualize_protein(prot: Protein, save_fig=False):
     # zie:
     #   https://matplotlib.org/stable/tutorials/intermediate/legend_guide.html
     legend = [
-        patches.Patch(color="red", label="Hydrofoob"),
-        patches.Patch(color="blue", label="Polair"),
+        patches.Patch(color="orange", label="Hydrofoob"),
+        patches.Patch(color="#0096FF", label="Polair"),
         patches.Patch(color="none", label=f"Stabiliteit: {prot.score}")
     ]
+    if "C" in prot.types:
+        score = legend.pop()
+        legend.append(patches.Patch(color="#50C878", label="Cysteine"))
+        legend.append(score)
 
     ax.legend(handles=legend)
     fig.suptitle(prot.types)
@@ -163,7 +178,5 @@ def visualize_scores(
 
 
 if __name__ == "__main__":
-    prot1 = Protein("HHPHPPPPH", [1, 2, -1, -1, 2, 2, 1, -2, 0])
-    print(prot1.score)
+    prot1 = Protein("CHPHPPPPH", [1, 2, -1, -1, 2, 2, 1, -2, 0])
     visualize_protein(prot1)
-    visualize_scores("HHPHHHPH", fold_randomly)

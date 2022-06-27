@@ -318,6 +318,47 @@ class Protein:
         """
         return Protein(prot.types, prot.directions)
 
+    @staticmethod
+    def validate(protein: 'Protein') -> bool:
+        """Validates a Protein instance
+
+        Parameters
+        ----------
+        protein : Protein
+            the protein instance to validate
+
+        Returns
+        -------
+        bool
+            Returns True if the instance is both completely initialised and
+            has no overlap between aminos
+        """
+        if protein is None:
+            return False
+
+        aminos = protein.aminos
+        all_initialized = any(
+            amino.direction != 0 for amino in aminos[:-1]
+        )
+
+        coords = list(map(lambda a: (a.x, a.y, a.z), aminos))
+        # see https://stackoverflow.com/a/5278151/8571352
+        all_unique_coords = len(coords) == len(set(coords))
+
+        return all_initialized and all_unique_coords
+
+    @property
+    def is_valid(self) -> bool:
+        """Returns whether this protein instance is a valid solution
+
+        Returns
+        -------
+        bool
+            Returns True if the current instance is both completely initialised
+            and has no overlap between aminos
+        """
+        return self.validate(self)
+
     def __len__(self) -> int:
         """Returns the length of this protein
 
