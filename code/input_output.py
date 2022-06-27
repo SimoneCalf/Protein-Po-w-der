@@ -1,13 +1,16 @@
 import csv
 import os
+import random
 
 
-def output(protein):
+def output(protein, algorithm, string):
     # create dir if it does not already exist
-    if not os.path.exists("data/"):
-        os.makedirs("data/")
+    if not os.path.exists(f"data/{algorithm}"):
+        os.makedirs(f"data/{algorithm}")
 
-    with open("data/output.csv", "w") as f:
+    file_number = random.getrandbits(16)
+
+    with open(f"{string}_{file_number}.csv", "w") as f:
         writer = csv.writer(f)
 
         writer.writerow(["index", "amino", "fold"])
