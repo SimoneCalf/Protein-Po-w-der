@@ -174,9 +174,47 @@ class Amino:
         """
         return Amino.get_coordinates_at(self, self.direction)
 
-    def __repr__(self):
-        """Represents this amino acid as a string."""
-        return "( {}{}: {:+} )".format(self.type, self.index, self.direction)
+    def __eq__(self, obj: any) -> bool:
+        """Compares object to this instance
+
+        Parameters
+        ----------
+        obj : any
+            the object to compare this instance to
+
+        Returns
+        -------
+        bool
+            True if both objects are functionally equal, False otherwise
+        """
+        if obj is None:
+            return False
+
+        # compare types
+        if not isinstance(obj, Amino):
+            return False
+
+        # compare type and _direciton attributes
+        if obj.type and obj.type != self.type or \
+            obj.direction and obj.direction != self._direction:
+            return False
+
+        # compare coordinates
+        if obj.x and obj.x != self.x or obj.y and obj.y != self.y \
+            or obj.z and obj.z != self.z:
+            return False
+
+        # compare index
+        if obj.index and obj.index != self.index:
+            return False
+
+        # compare bonds
+        if obj.bonded and obj.bonded != self.bonded:
+            return False
+
+        return True
+
+
 
     def __hash__(self) -> int:
         """Returns a unique hash for an Amino object
@@ -208,6 +246,10 @@ class Amino:
             self.y,
             self.z
         ))
+
+    def __repr__(self):
+        """Represents this amino acid as a string."""
+        return "( {}{}: {:+} )".format(self.type, self.index, self.direction)
 
 
 class AminoBond:

@@ -1,9 +1,7 @@
-import sys
 import unittest
 
 from classes.protein import Protein
 from algorithms.random_protein import fold_randomly
-from visualization import visualize_protein
 
 
 class RandomTest(unittest.TestCase):
@@ -22,8 +20,10 @@ class RandomTest(unittest.TestCase):
         fold_randomly(prot2, prot2.aminos[0])
         self.assertIsInstance(prot1, Protein)
         self.assertIsInstance(prot2, Protein)
-        self.assertTrue(Protein.is_valid(prot1))
-        self.assertTrue(Protein.is_valid(prot1))
+        self.assertTrue(Protein.validate(prot1))
+        self.assertTrue(Protein.validate(prot1))
+        self.assertNotEqual(prot1, prot2)
+
 
 if __name__ == "__main__":
     unittest.main()

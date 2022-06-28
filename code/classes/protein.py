@@ -370,6 +370,30 @@ class Protein:
         """
         return self.validate(self)
 
+    def __eq__(self, obj: any) -> bool:
+        """Returns a boolean representing whether two objects are the same
+
+        Returns
+        -------
+        bool
+            True if both objects are the same, False otherwise
+        """
+        # type checking
+        if obj is None or not isinstance(obj, Protein):
+            return False
+
+        # shallow amino checking
+        if obj.types and obj.types != self.types or \
+                obj.directions and obj.directions != self.directions:
+            return False
+
+        # deep amino checking
+        if obj.aminos and obj.aminos != self.__aminos:
+            return False
+
+        return True
+
+
     def __hash__(self) -> int:
         """Returns the hash of a protein instance
 
