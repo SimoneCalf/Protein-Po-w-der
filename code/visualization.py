@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plot
 from matplotlib.path import Path
 import matplotlib.patches as patches
+from mimetypes import guess_type
 import pandas as pd
 import os
 from typing import Any, Callable, Union
@@ -30,7 +31,8 @@ def visualize_protein(
         by default 'data/' in the current working directory
     save_fig_filename : Union[str, bytes]
         the filename to save the figure to, if the save_fig flag is set,
-        by default it is set to a string of amino types of the given protein
+        by default it is set to a string of amino types of the given protein,
+        followed by a sha1 hash of the given protein instance (using hash()),
         followed by the file extension '.png'
 
     See Also
@@ -164,10 +166,11 @@ def visualize_protein(
             if type(save_fig_filename) == bytes \
             else "{file}.png".format(file=save_fig_filename.replace(".png", "")) \
             if save_fig_filename \
-            else f"{prot.types}.png"
+            else f"{prot.types}_{Protein.to_sha1(prot)}.png"
 
-        # save file
-        plot.savefig(f"{cwd}/{path}/{filename}")
+        # save file if a file with that hash doesn't already exist
+        if not os.path.exists(f"{path}/{filename}"):
+            plot.savefig(f"{cwd}/{path}/{filename}")
 
     # laat het figuur zien
     plot.show()

@@ -1,4 +1,4 @@
-from random import random 
+from random import random
 
 from classes.protein import Protein
 from classes.amino import Amino

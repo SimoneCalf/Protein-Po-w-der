@@ -1,4 +1,38 @@
+from functools import reduce
+from math import sqrt, floor
+from re import A
 from typing import Sequence, Tuple
+
+
+def cantor_pair(a: int, b: int, deconstructable=False) -> Tuple[int, bool]:
+    """
+    Returns a cantor pairing number of two given numbers
+
+    Parameters
+    ----------
+    a : int
+        the first number
+    b : int
+        the second number
+
+    Returns
+    -------
+    int
+        a unique number identifying the pair of numbers in the specific order
+        they were given
+
+    See Also
+    --------
+    `Wikipedia <https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function>`_:
+        for the cantor pairing function
+    """
+    return (int((b+a)/2 * (a+b+1) + b), (a, b) >= (0, 0))
+
+
+def cantor_str(input_str: str) -> int:
+    # convert string to collection of utf-8 character codes and
+    # reduce that collection to a cantor pair
+    return reduce(cantor_pair, map(lambda i: ord(i), input_str))
 
 
 class Amino:
@@ -64,7 +98,11 @@ class Amino:
         ValueError
             raises ValueError when the given direction is not in the range of
             -2 to 3
+        TypeError
+            raises a TypeError when no type
         """
+        if(type is None):
+            raise TypeError("No type given")
         if direction not in range(-2, 3):
             raise ValueError(
                 "Given direction is not valid. \
@@ -147,16 +185,29 @@ class Amino:
         -------
         int
             a unique integer by which python can identify a specific Amino
-            instance
-        """
+            instance by its values (works across instances)
+
+        See Also
+        --------
+        `This Answer <https://stackoverflow.com/a/27522708/8571352>`_:
+            on why hash values are different accross processes
+        `cantor_str`:
+            used to reliably return the same number given the same str
+`        """
+        # hash instance
+        # we convert self.type to a cantor pair number in order to
+        # avoid hash randomization across instances
+
+        #
+        # see: https://stackoverflow.com/a/27522708/8571352
         return hash((
-            self.type,
+            cantor_str(self.type),
             self.index,
             self._direction,
             self.x,
             self.y,
             self.z
-            ))
+        ))
 
 
 class AminoBond:

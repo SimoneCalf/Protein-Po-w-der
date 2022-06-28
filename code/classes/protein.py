@@ -1,6 +1,7 @@
-from typing import List, Optional, Sequence, Set, Tuple, Union
 from functools import reduce
+from hashlib import sha1
 import numpy as np
+from typing import List, Optional, Sequence, Set, Tuple, Union
 
 from classes.amino import Amino, AminoBond
 
@@ -368,6 +369,44 @@ class Protein:
             and has no overlap between aminos
         """
         return self.validate(self)
+
+    def __hash__(self) -> int:
+        """Returns the hash of a protein instance
+
+        Returns
+        -------
+        int
+            the hash of the protein as an int, can be used to identify proteins
+            by the same value quickly for dictionary keys or sets
+        """
+        return hash(tuple(self.__aminos))
+
+    @classmethod
+    def to_sha1(cls, protein: 'Protein') -> str:
+        """Returns the sha1 hash of a protein instance
+
+        Parameters
+        ----------
+        protein : Protein
+            the protein to hash
+
+        Returns
+        -------
+        str
+            Returns a sha1 hash of this protein, as a string,
+            is the same for comparisson when a protein's amino types
+            and folding directions are the same
+
+        Raises
+        ------
+        TypeError
+            _description_
+        """
+        if not isinstance(protein, cls):
+            raise TypeError("Given argument must be Protein instance")
+
+        # convert hash() value to bytes and turn it to a sha1 hash
+        return sha1(str(hash(protein)).encode()).hexdigest()
 
     def __len__(self) -> int:
         """Returns the length of this protein

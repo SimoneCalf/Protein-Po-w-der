@@ -1,4 +1,5 @@
-from random import choice as random_choice, random as random_random
+import random
+from typing import Sequence
 
 from classes.protein import Protein
 from classes.amino import Amino
@@ -29,14 +30,14 @@ class HillClimber(BaseAlgorithm):
             if protein.is_valid:
                 return protein
 
-    def fold_one_amino_acid(self, protein: Protein, amino: Amino) -> Protein:
+    def fold_n_amino_acids(self, protein: Protein, aminos: Sequence[Amino]) -> Protein:
         """Folds a Protein randomly at a single point
 
         Parameters
         ----------
         protein : Protein
             the protein to fold randomly
-        amino : Amino
+        aminos : Amino
             the amino at which point the protein should be folded
 
         Returns
@@ -45,18 +46,22 @@ class HillClimber(BaseAlgorithm):
             Returns a new protein instance with the same amino structure,
             but folded in a random valid direction at the given amino
         """
+
+        # copy protein, and fold protein at n amount of places
         protein = Protein.copy(protein)
-        foldoptions = protein.foldoptions(amino, completely_random=True)
-        foldoptions[:] =\
-            [option for option in foldoptions if
-                protein.empty_coordinate(amino, option)]
-        if not foldoptions:
-            return None
-        direction = random_choice(foldoptions)
-        protein.fold(amino.index, direction)
+        for amino in aminos:
+            foldoptions = protein.foldoptions(amino, completely_random=True)
+            foldoptions[:] =\
+                [option for option in foldoptions if
+                    protein.empty_coordinate(amino, option)]
+            if not foldoptions:
+                return None
+            direction = random.choice(foldoptions)
+            protein.fold(amino.index, direction)
+
         return protein
 
-    def get_random_amino(self, protein: Protein) -> Amino:
+    def get_random_amino(self, protein: Protein, amount: int = 1) -> Amino:
         """Selects a random amino from the protein
 
         Parameters
@@ -69,12 +74,30 @@ class HillClimber(BaseAlgorithm):
         Amino
             Returns the instance of the randomly selected amino
         """
-        return random_choice(protein.aminos[:-1])
+        return random.choices(protein.aminos[:-1], k=amount)
 
-    # gebruiken om het algoritme te starten
+    def fold_randomly(self, protein: Protein, mutations: int = 1):
+        """Randomly folds a protein at random places
+
+        Parameters
+        ----------
+        protein : Protein
+            the protein to fold
+        mutations : int, optional
+            the amount of times to perform random folds, by default 1
+
+        Returns
+        -------
+        Protein
+            a new protein instance based on the given protein, but folded
+            in random directions at random places
+        """
+        rand_aminos = self.get_random_amino(protein, amount=mutations)
+        return self.fold_n_amino_acids(protein, rand_aminos)
+
     def run(
         self,
-        repeat: int = 10,
+        runs: int = 10,
         iterations: int = 1000,
         verbose: bool = False
     ) -> Protein:
@@ -99,28 +122,28 @@ class HillClimber(BaseAlgorithm):
             of the given protein, folded in the shape of the best approximated
             solution
         """
+        # update verbose flag
+        self.verbose = verbose
 
         # safeguard giving repeat 0 or iterations 0
-        repeat, iterations = max(1, repeat), max(1, iterations)
+        runs, iterations = max(1, runs), max(1, iterations)
 
-        for s in range(0, repeat):
+        for s in range(0, runs):
             start = self.get_starting_point(self.protein)
-            i, no_improvement = 0, 0
             # ga zolang door tot er n keer geen verbetering is gevonden
+            curr_iteration, no_improvement = 0, 0
             while no_improvement <= iterations:
-                if verbose:
-                    self.log(
-                        f"run: {s}; iteration {i}; " +
-                        f" iterations with no improvement: {no_improvement}; "
-                        + f"score: {start.score}",
-                        start=True
-                    )
-                # random vouwen
-                # foldpoint is een amino object
+                self.log(
+                    f"run: {s+1}; iteration {curr_iteration}; " +
+                    f" iterations with no improvement: {no_improvement}; "
+                    + f"score: {start.score}",
+                    start=True
+                )
+
+                # maak een
                 new_state = None
                 while new_state is None:
-                    foldpoint = self.get_random_amino(start)
-                    new_state = self.fold_one_amino_acid(start, foldpoint)
+                    new_state = self.fold_randomly(start)
                     if not Protein.validate(new_state):
                         new_state = None
 
@@ -138,23 +161,21 @@ class HillClimber(BaseAlgorithm):
                 # counter
                 no_improvement += 1
 
-                i += 1
+                curr_iteration += 1
 
             # als we n-keer geen verbetering hebben gevonden dan hebben we
             # een lokaal minimum behaald,
             # als dit beter is dan ons vorige resultaat dan slaan we het op
             # en gaan we nog een keer verder
             if self.best.score >= start.score:
-                if verbose:
-                    self.log(
-                        f"Improved {self.best.score} by " +
-                        f"{self.best.score - start.score} to {start.score}",
-                    )
-                self.best = Protein.copy(start)
+                self.log(
+                    f"Improved {self.best.score} by " +
+                    f"{self.best.score - start.score} to {start.score}",
+                )
+            self.best = Protein.copy(start)
 
-        if verbose:
-            self.log(
-                f"Best solution: {self.best}; score: {self.best.score}",
-                end=True
-            )
+        self.log(
+            f"Best solution: {self.best}; score: {self.best.score}",
+            end=True
+        )
         return self.best

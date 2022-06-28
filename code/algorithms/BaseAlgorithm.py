@@ -8,6 +8,24 @@ from classes.protein import Protein
 
 
 class BaseAlgorithm():
+    """A superclass with some common properties and methods used by algorithms
+
+    Attributes
+    -----------
+    protein: Protein
+        a copy of the protein the instance was first initialized with
+    best: Protein
+        the best protein this algorithm has found (so far)
+    verbose: bool
+        flag that controls whether the algorithm prints extra information
+        while it is running
+
+    Methods
+    -------
+    log(msg="", start=False, end=False):
+        prints a message if the verbose flag is set
+
+    """
     def __init__(self, protein: Union[Protein, str]) -> None:
         # create protein from string if string was given
         if type(protein) == str:
@@ -23,12 +41,21 @@ class BaseAlgorithm():
         self.prot_str = self.__protein.types
 
         # logging nonsense
+        self.verbose = False
         self.__log = deque()
         self.__thread = None
 
     @property
     def protein(self):
         return Protein.copy(self.__protein)
+
+    def __loglisten(_, q):
+        while True:
+            if q:
+                print(q.popleft(), end="\033[K\r", flush=True)
+            else:
+                break
+            time.sleep(.05)
 
     def log(self, msg: str, start: bool = False, end: bool = False):
         """Logs messages in a different thread
@@ -42,19 +69,13 @@ class BaseAlgorithm():
         end : bool, optional
             whether to kill the logger, by default False
         """
-        def loglisten(q):
-            while True:
-                if q:
-                    print(q.popleft(), end="\033[K\r", flush=True)
-                else:
-                    break
-                time.sleep(.05)
+        if not self.verbose:
+            return
 
-        # add message to the queue
         # start the thread if the parameter is given
         if start and self.__thread is None:
             self.__thread = threading.Thread(
-                target=loglisten,
+                target=self.__loglisten,
                 daemon=True,
                 args=(self.__log,)
             )
@@ -67,7 +88,9 @@ class BaseAlgorithm():
 
             print(msg)
             return
+
+        # add message to the queue
         self.__log.append(msg)
 
-    def run():
+    def run(verbose: bool = False):
         raise NotImplementedError
