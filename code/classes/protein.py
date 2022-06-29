@@ -244,7 +244,7 @@ class Protein:
             # or the last amino
             # (if it has a bond, that will have already been processed)
             # and the 0 direction messes things up
-            if amino.type != "H" and amino.type != "C" or amino.direction == 0:
+            if amino.type != "H" or amino.type != "C" or amino.direction == 0:
                 continue
 
             # get the directions to check
@@ -392,7 +392,6 @@ class Protein:
             return False
 
         return True
-
 
     def __hash__(self) -> int:
         """Returns the hash of a protein instance
