@@ -7,6 +7,7 @@ from classes.amino import Amino
 from algorithms.hillclimber import HillClimber
 from algorithms.random_protein import fold_randomly
 
+
 class SimulatedAnnealing(HillClimber):
     def __init__(self, protein: Protein, temperature: int = 2000):
         super().__init__(protein)
@@ -23,13 +24,12 @@ class SimulatedAnnealing(HillClimber):
         )
 
     # gebruiken om het algoritme te starten
-    def run( self,
-             iterations: int = 1000,
-             verbose: bool = False,
-        ):
+    def run(self,
+            iterations: int = 1000,
+            verbose: bool = False
+            ):
         # make sure we'll run the algorithm at least once
         self.iterations = max(1, iterations)
-
 
         # get random starting point
         curr = self.get_starting_point(self.protein)

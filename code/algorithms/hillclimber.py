@@ -30,7 +30,11 @@ class HillClimber(BaseAlgorithm):
             if protein.is_valid:
                 return protein
 
-    def fold_n_amino_acids(self, protein: Protein, aminos: Sequence[Amino]) -> Protein:
+    def fold_n_amino_acids(
+        self,
+        protein: Protein,
+        aminos: Sequence[Amino]
+    ) -> Protein:
         """Folds a Protein randomly at a single point
 
         Parameters
@@ -156,14 +160,12 @@ class HillClimber(BaseAlgorithm):
                         no_improvement = 0
                         continue
 
-            
                 # if no improvement is found we increase the counter
                 no_improvement += 1
 
                 curr_iteration += 1
 
-
-            # if we do not find an improvement n times we reached a local minimun
+            # if there is no improvement n times, a local minimum is reached
             # if this is better than the previous result we save it and proceed
             if self.best.score >= start.score:
                 self.log(

@@ -21,7 +21,8 @@ class ParallelHillClimber(HillClimber):
         --------
         BaseAlgorithm.log: A threaded log method that prints messages to
                            stdout
-        `PythonSpeed <https://pythonspeed.com/articles/python-multiprocessing/>`_:
+        `PythonSpeed
+        <https://pythonspeed.com/articles/python-multiprocessing/>`_:
             an article explaining why mixing threads and processes doesn't work
         """
         if not self.verbose:
@@ -102,7 +103,7 @@ class ParallelHillClimber(HillClimber):
                     p.start()
 
             for i, p in enumerate(processes):
-                p.join(60) # wait for max. 60 seconds for process to finish
+                p.join(60)  # wait for max. 60 seconds for process to finish
                 runs_completed += 1
 
                 # retrieve latest result, and massage the result into a protein

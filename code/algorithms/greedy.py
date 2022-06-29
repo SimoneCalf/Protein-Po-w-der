@@ -34,7 +34,8 @@ def greedy(
     if faulty_direction:
         options.remove(faulty_direction)
 
-    options[:] = [option for option in options if protein.empty_coordinate(curr, option)]
+    options[:] = [option for option in options
+                  if protein.empty_coordinate(curr, option)]
 
     if not options:
         faulty_direction = prev.direction
@@ -50,11 +51,11 @@ def greedy(
             score = protein.score
             scores.append(score)
         print(f"scores: {scores}")
-        minimum = [index for index, score in enumerate(scores) if score == min(scores)]
+        minimum = [index for index, score in enumerate(scores)
+                   if score == min(scores)]
         print(f"minimum: {minimum}")
         direction = options[random.choice(minimum)]
         protein.fold(curr.index, direction)
         print(protein.grid)
         visualize_protein(protein)
         greedy(protein, curr)
-        
