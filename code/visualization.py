@@ -2,13 +2,13 @@
 import matplotlib.pyplot as plot
 from matplotlib.path import Path
 import matplotlib.patches as patches
-import pandas as pd
 import os
+import pandas as pd
 from typing import Any, Callable, Union
 
 # Local imports
-from classes.protein import Protein
 from classes.amino import Amino
+from classes.protein import Protein
 
 
 def visualize_protein(

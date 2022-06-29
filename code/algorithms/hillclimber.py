@@ -1,10 +1,10 @@
 import random
 from typing import Sequence
 
-from classes.protein import Protein
-from classes.amino import Amino
 from algorithms.BaseAlgorithm import BaseAlgorithm
 from algorithms.random_protein import fold_randomly
+from classes.amino import Amino
+from classes.protein import Protein
 
 
 class HillClimber(BaseAlgorithm):

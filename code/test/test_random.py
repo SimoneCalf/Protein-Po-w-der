@@ -1,17 +1,20 @@
 import unittest
 
-from classes.protein import Protein
 from algorithms.random_protein import fold_randomly
+from classes.protein import Protein
 
 
 class RandomTest(unittest.TestCase):
+    # !!
     def __init__(self, methodName: str = ...) -> None:
+        # !!
         super().__init__(methodName)
         self.test_prot = Protein(
             "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH",
         )
 
     def test_fold_randomly(self):
+        # !!
         prot1 = Protein.copy(self.test_prot)
         prot2 = Protein.copy(self.test_prot)
         self.assertIsInstance(prot1, Protein)

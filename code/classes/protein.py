@@ -2,6 +2,7 @@ from functools import reduce
 from hashlib import sha1
 import numpy as np
 from typing import List, Optional, Sequence, Set, Tuple, Union
+
 from classes.amino import Amino, AminoBond
 
 
@@ -138,10 +139,12 @@ class Protein:
 
     @property
     def types(self) -> str:
+        # !!
         return "".join(map(lambda a: a.type, self.__aminos))
 
     @property
     def directions(self) -> Tuple[int, ...]:
+        # !!
         return tuple(map(lambda a: a.direction, self.__aminos))
 
     def append(self, amino: Amino) -> List[Amino]:
@@ -230,10 +233,12 @@ class Protein:
             return None
 
     def empty_coordinate(self, amino, direction) -> bool:
+        # !!
         x, y = amino.get_coordinates_at(amino, direction)
         return self.__grid[y, x] is None
 
     def calculate_bonds(self, aminos: Sequence) -> Set[Tuple[Amino]]:
+        # !!
         bonds = []
 
         # loop through given list of aminos

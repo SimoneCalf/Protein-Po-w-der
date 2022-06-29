@@ -1,6 +1,7 @@
-from visualization import visualize_protein
-from classes.protein import Protein
 from algorithms.greedy import greedy
+from classes.protein import Protein
+from visualization import visualize_protein
+
 
 if __name__ == "__main__":
     test_prot = Protein("HHHHHHHPPP", [1, 2])

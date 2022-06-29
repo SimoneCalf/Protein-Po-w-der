@@ -1,8 +1,8 @@
 from collections import deque
 from typing import Union
 
-from classes.protein import Protein
 from algorithms.BaseAlgorithm import BaseAlgorithm
+from classes.protein import Protein
 
 
 class DepthFirstFold(BaseAlgorithm):

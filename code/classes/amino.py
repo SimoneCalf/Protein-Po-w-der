@@ -1,6 +1,4 @@
 from functools import reduce
-from math import sqrt, floor
-from re import A
 from typing import Sequence, Tuple
 
 
@@ -120,10 +118,12 @@ class Amino:
 
     @property
     def direction(self) -> int:
+        # !!
         return self._direction
 
     @direction.setter
     def direction(self, dir: int) -> int:
+        # !!
         if dir not in range(-2, 3):
             raise ValueError(
                 "Given direction is not valid. \
@@ -265,10 +265,12 @@ class AminoBond:
 
     """
     def __init__(self, origin: Amino, target: Amino) -> None:
+        # !!
         self.origin = origin
         self.target = target
 
     def __eq__(self, __o: object) -> bool:
+        # !!
         if type(__o) != type(self):
             return False
         if __o.origin != self.origin and __o.origin != self.target:
@@ -283,8 +285,10 @@ class AminoBond:
         return True
 
     def __hash__(self) -> int:
+        # !!
         return hash((self.origin, self.target))
 
     def __repr__(self) -> str:
+        # !!
         return f"{self.origin.type}{self.origin.index}-" +\
             f"{self.target.type}{self.target.index}"

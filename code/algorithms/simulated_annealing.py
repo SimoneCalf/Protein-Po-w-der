@@ -1,23 +1,22 @@
 from random import random
-from tempfile import tempdir
-from math import floor
 
-from classes.protein import Protein
-from classes.amino import Amino
 from algorithms.hillclimber import HillClimber
-from algorithms.random_protein import fold_randomly
+from classes.protein import Protein
 
 
 class SimulatedAnnealing(HillClimber):
     def __init__(self, protein: Protein, temperature: int = 2000):
+        # !!
         super().__init__(protein)
         self._start_temp = temperature
         self.iterations = 1000
 
     def get_temperature(self, i=1):
+        # !!
         return self._start_temp - (self._start_temp/self.iterations) * i
 
     def accept(self, new, old, iterations=1):
+        # !!
         return 2**(
             new.score - old.score /
             float(self.get_temperature(iterations)+1)
@@ -28,6 +27,7 @@ class SimulatedAnnealing(HillClimber):
             iterations: int = 1000,
             verbose: bool = False
             ):
+            # !!
         # make sure we'll run the algorithm at least once
         self.iterations = max(1, iterations)
 

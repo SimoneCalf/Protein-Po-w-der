@@ -6,6 +6,15 @@ from classes.protein import Protein
 
 
 def input(file):
+    """
+    Recreates a protein instance from the letters detailed in an
+    output file of a certain protein
+
+    Parameters
+    ----------
+    file : csv_file
+        output file for certain protein
+    """
     df = pd.read_csv(file)
 
     # seperate stability score from the letters in output file

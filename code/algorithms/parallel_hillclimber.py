@@ -1,12 +1,14 @@
 from multiprocessing import Process, cpu_count, Queue
 from os import getpid
 from typing import Union
+
 from algorithms.hillclimber import HillClimber
 from classes.protein import Protein
 
 
 class ParallelHillClimber(HillClimber):
     def __init__(self, protein: Union[Protein, str]) -> None:
+        # !!
         super().__init__(protein)
 
     def log(self, msg: str, end=False):
@@ -41,6 +43,7 @@ class ParallelHillClimber(HillClimber):
                 iterations: int = 1000,
                 verbose: bool = False,
             ):
+            # !!
         # make sure we'll run the algorithm at least once
         iterations = max(1, iterations)
 
@@ -76,7 +79,7 @@ class ParallelHillClimber(HillClimber):
         iterations: int = 1000,
         verbose: Union[bool, int] = 0
     ) -> Protein:
-
+    # !!
         # update verbose flag
         self.verbose = verbose
         # initialize values for managing processes and their results

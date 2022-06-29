@@ -1,7 +1,7 @@
 from collections import deque
 import sys
-import time
 import threading
+import time
 from typing import Union
 
 from classes.protein import Protein
@@ -27,6 +27,7 @@ class BaseAlgorithm():
 
     """
     def __init__(self, protein: Union[Protein, str]) -> None:
+        # !!
         # create protein from string if string was given
         if type(protein) == str:
             self.__protein = Protein(protein)
@@ -47,9 +48,11 @@ class BaseAlgorithm():
 
     @property
     def protein(self):
+        # !!
         return Protein.copy(self.__protein)
 
     def __loglisten(_, q):
+        # !!
         while True:
             if q:
                 print(q.popleft(), end="\033[K\r", flush=True)
@@ -93,4 +96,5 @@ class BaseAlgorithm():
         self.__log.append(msg)
 
     def run(verbose: bool = False):
+        # !!
         raise NotImplementedError

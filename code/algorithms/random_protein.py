@@ -2,8 +2,8 @@ import random
 import sys
 from typing import List
 
-from classes.protein import Protein
 from classes.amino import Amino
+from classes.protein import Protein
 
 
 def fold_randomly(

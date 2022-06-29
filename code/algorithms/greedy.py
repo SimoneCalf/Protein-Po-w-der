@@ -1,6 +1,7 @@
 import random
-from classes.protein import Protein
+
 from classes.amino import Amino
+from classes.protein import Protein
 from visualization import visualize_protein
 
 

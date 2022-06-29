@@ -1,17 +1,12 @@
 # system imports
-from ast import Call
-from typing import Callable, Sequence, Union
 from time import perf_counter as time
-
-# class imports
-from classes.protein import Protein
+from typing import Callable, Union, Dict
 
 # algorithm imports
 from algorithms.random_protein import fold_randomly
-from algorithms.depth_first import DepthFirstFold
-from algorithms.hillclimber import HillClimber
-from algorithms.parallel_hillclimber import ParallelHillClimber
-from algorithms.simulated_annealing import SimulatedAnnealing
+
+# class imports
+from classes.protein import Protein
 
 # utils import
 from input_output import output
@@ -65,7 +60,8 @@ def create_protein(protein_input_str: str = None) -> Union[Protein, None]:
             continue
 
 
-def time_func(func: Callable, msg: str = "", kargs: dict[any] = {}):
+def time_func(func: Callable, msg: str = "", kargs: Dict[any] = {}):
+    # !!
     if not isinstance(func, Callable):
         raise TypeError("function argument {func} wasn't callable")
 
@@ -81,6 +77,7 @@ def time_func(func: Callable, msg: str = "", kargs: dict[any] = {}):
 
 
 def main():
+    # !!
     protein = create_protein("HHPHHHPHPHHHPH")
     if protein:
         print("Random: ")
