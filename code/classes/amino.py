@@ -23,7 +23,8 @@ def cantor_pair(a: int, b: int, deconstructable=False) -> Tuple[int, bool]:
 
     See Also
     --------
-    `Wikipedia <https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function>`_:
+    `Wikipedia
+    <https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function>`_:
         for the cantor pairing function
     """
     return (int((b+a)/2 * (a+b+1) + b), (a, b) >= (0, 0))
@@ -196,12 +197,12 @@ class Amino:
 
         # compare type and _direciton attributes
         if obj.type and obj.type != self.type or \
-            obj.direction and obj.direction != self._direction:
+                obj.direction and obj.direction != self._direction:
             return False
 
         # compare coordinates
         if obj.x and obj.x != self.x or obj.y and obj.y != self.y \
-            or obj.z and obj.z != self.z:
+                or obj.z and obj.z != self.z:
             return False
 
         # compare index
@@ -213,8 +214,6 @@ class Amino:
             return False
 
         return True
-
-
 
     def __hash__(self) -> int:
         """Returns a unique hash for an Amino object

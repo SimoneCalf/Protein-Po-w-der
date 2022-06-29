@@ -242,7 +242,8 @@ class Protein:
             # or the last amino
             # (if it has a bond, that will have already been processed)
             # and the 0 direction messes things up
-            if (amino.type != "H" and amino.type != "C") or amino.direction == 0:
+            if (amino.type != "H" and amino.type != "C") \
+                    or amino.direction == 0:
                 continue
 
             # get the directions to check
