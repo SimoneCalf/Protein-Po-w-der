@@ -266,7 +266,7 @@ class Protein:
                     # set the bonded property of each respective
                     # amino to their opposite, and add it the the set
                     target = self.__grid[y, x]
-                    if target.type == "H" or target.type == "P":
+                    if target.type == "H" or target.type == "C":
                         amino.bonded.add(target)
                         self.__grid[y, x].bonded.add(amino)
                         bond = AminoBond(amino, target)
