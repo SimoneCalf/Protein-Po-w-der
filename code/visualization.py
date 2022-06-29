@@ -163,7 +163,8 @@ def visualize_protein(
                 file=str(save_fig_filename, "utf-8").replace(".png", "")
             )\
             if type(save_fig_filename) == bytes \
-            else "{file}.png".format(file=save_fig_filename.replace(".png", "")) \
+            else "{file}.png".format(
+                file=save_fig_filename.replace(".png", "")) \
             if save_fig_filename \
             else f"{prot.types}_{Protein.to_sha1(prot)}.png"
 
@@ -191,7 +192,8 @@ def visualize_scores(
 
     Notes
     --------
-    See: `Datagy <https://datagy.io/python-count-occurrences-in-list/#Use_Pandas_to_Count_Number_of_Occurrences_in_a_Python_List>`_
+    See: `Datagy
+    <https://datagy.io/python-count-occurrences-in-list/#Use_Pandas_to_Count_Number_of_Occurrences_in_a_Python_List>`_
     for example of counting occurances with pandas, which goes nicely with
     matplotlib
     """

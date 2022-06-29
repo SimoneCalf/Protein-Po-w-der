@@ -51,7 +51,8 @@ def create_protein(protein_input_str: str = None) -> Union[Protein, None]:
 
             # pad list with last directions if necessary
             if len(dir_list) < len(protein_input_str):
-                dir_list += [dir_list[-1]] * (len(protein_input_str) - len(dir_list))
+                dir_list += [dir_list[-1]] * (len(protein_input_str) -
+                                              len(dir_list))
 
             # return string
             return Protein(protein_input_str, dir_list)
@@ -78,6 +79,7 @@ def time_func(func: Callable, msg: str = "", kargs: dict[any] = {}):
     result = func(**kargs)
     return (result,  time() - start)
 
+
 def main():
     protein = create_protein("HHPHHHPHPHHHPH")
     if protein:
@@ -101,7 +103,9 @@ def main():
     # #    save_fig_dir=dff.__class__.__name__,
     # # )
 
-    # #  hcb = HillClimber("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
+    # #  hcb = HillClimber(
+    # #      "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH"
+    # #  )
     # #  solution, time = time_func(
     # #      hcb.run,
     # #      kargs={"runs": 20, "iterations": 250, "verbose": False}
@@ -139,7 +143,9 @@ def main():
     # #      save_fig_filename=f"{phc.__class__.__name__}_{solution.types}"
     # #  )
 
-    # sim = SimulatedAnnealing("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
+    # sim = SimulatedAnnealing(
+    #     "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH"
+    # )
     # print("Starting simulated annealing")
     # solution = sim.run(iterations=1000, verbose=3)
     # print(solution)
@@ -149,6 +155,7 @@ def main():
     #     save_fig=True,
     #     save_fig_filename=f"{sim.__class__.__name__}.png"
     # )
+
 
 if __name__ == "__main__":
     main()
