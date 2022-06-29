@@ -50,8 +50,8 @@ class DepthFirstFold(BaseAlgorithm):
             curr = self.__stack.pop()
             curr_amino = curr.next_uninitialized()
 
-            # er zijn geen ongeinitieerde aminos meer,
-            # we hebben een oplossing
+            # there are nu uninitiated aminos available
+            # there is a solution
             if curr_amino is None:
                 count += 1
                 self.log(f"found {count} solutions", start=True)
@@ -61,19 +61,19 @@ class DepthFirstFold(BaseAlgorithm):
                 continue
 
             else:
-                # loop door de mogelijke richtingen
+                # loop through possible solutions
                 for direction in curr.foldoptions(curr_amino):
                     if curr.empty_coordinate(curr_amino, direction):
-                        # voor elke geldige oplossing, maken we een kopie
-                        # en vouwen we die kopie de huidige richting in
+                        # for each possible solution, there is a copy made
+                        # the copy gets folded in the currenct direction
                         nxt_prot = Protein.copy(curr)
                         nxt_prot.fold(curr_amino.index, direction)
 
-                        # vervolgens stoppen we die bovenop de stack
+                        # the copy goes on top of the stack
                         self.__stack.append(nxt_prot)
                     else:
-                        # als er geen geldige richtingen zijn gaan we door
-                        # naar de volgende eiwit-mogelijkheid in de stack
+                        # if there are no valid direction we continue
+                        # to the next protein-possibility in the stack
                         continue
 
         self.log(f"Best solution: {self.best.score}", end=True)

@@ -57,3 +57,4 @@ def greedy(
         print(protein.grid)
         visualize_protein(protein)
         greedy(protein, curr)
+        

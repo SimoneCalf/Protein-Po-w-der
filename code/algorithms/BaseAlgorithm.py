@@ -40,7 +40,7 @@ class BaseAlgorithm():
         self.best = self.protein
         self.prot_str = self.__protein.types
 
-        # logging nonsense
+        # needed for threaded logging
         self.verbose = False
         self.__log = deque()
         self.__thread = None

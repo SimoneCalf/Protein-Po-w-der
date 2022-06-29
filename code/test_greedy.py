@@ -9,3 +9,4 @@ if __name__ == "__main__":
     greedy(test_prot, prev=test_prot.aminos[1])
     print(test_prot)
     visualize_protein(test_prot)
+    

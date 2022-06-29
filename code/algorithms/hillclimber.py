@@ -130,7 +130,7 @@ class HillClimber(BaseAlgorithm):
 
         for s in range(0, runs):
             start = self.get_starting_point(self.protein)
-            # ga zolang door tot er n keer geen verbetering is gevonden
+            # proceed till no improvement is found n times
             curr_iteration, no_improvement = 0, 0
             while no_improvement <= iterations:
                 self.log(
@@ -140,16 +140,15 @@ class HillClimber(BaseAlgorithm):
                     start=True
                 )
 
-                # maak een
+                # fold randomly untill a random fold is reached
                 new_state = None
                 while new_state is None:
                     new_state = self.fold_randomly(start)
                     if not Protein.validate(new_state):
                         new_state = None
 
-                # vergelijk de score, als er een verbetering is gevonden dan
-                # slaan we die op en resetten we de counter
-
+                # compare the score, if an improvement is found
+                # save it and reset the counter
                 if start.score >= new_state.score:
                     start = Protein.copy(new_state)
 
@@ -157,16 +156,15 @@ class HillClimber(BaseAlgorithm):
                         no_improvement = 0
                         continue
 
-                # als er geen verbetering is gevonden dan verhogen we de
-                # counter
+            
+                # if no improvement is found we increase the counter
                 no_improvement += 1
 
                 curr_iteration += 1
 
-            # als we n-keer geen verbetering hebben gevonden dan hebben we
-            # een lokaal minimum behaald,
-            # als dit beter is dan ons vorige resultaat dan slaan we het op
-            # en gaan we nog een keer verder
+
+            # if we do not find an improvement n times we reached a local minimun
+            # if this is better than the previous result we save it and proceed
             if self.best.score >= start.score:
                 self.log(
                     f"Improved {self.best.score} by " +

@@ -2,7 +2,6 @@ from functools import reduce
 from hashlib import sha1
 import numpy as np
 from typing import List, Optional, Sequence, Set, Tuple, Union
-
 from classes.amino import Amino, AminoBond
 
 
@@ -78,7 +77,7 @@ class Protein:
             Raises an IndexError when the given index is an invalid point in
             the 1 dimensional array
         """
-        # Safeguard index overflow
+        # safeguard index overflow
         if index > len(self.__aminos):
             raise IndexError(
                 "Given index '{}' is invalid; \
@@ -102,7 +101,6 @@ class Protein:
         prev = self.__aminos[index]
         for amino in self.__aminos[index+1:]:
             # retrieve previous move_dir and coordinates
-
             # clear current position in grid
             if in_place:
                 grid[amino.y, amino.x] = None

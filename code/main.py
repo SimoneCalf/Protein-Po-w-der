@@ -79,73 +79,76 @@ def time_func(func: Callable, msg: str = "", kargs: dict[any] = {}):
     return (result,  time() - start)
 
 def main():
-    # protein = None
-    # if protein:
-    #     print("Random: ")
-    #     fold_randomly(protein, prev=protein.aminos[0])
-    #     output(protein)
-    #     visualize_protein(protein)
+    protein = create_protein("HHPHHHPHPHHHPH")
+    if protein:
+        print("Random: ")
+        fold_randomly(protein, prev=protein.aminos[0])
+        output(protein)
+        visualize_protein(protein)
+        for amino in protein.aminos:
+            for bond in amino.bonded:
+                print(bond.target, amino.bonded.origin)
 
-    ## do depth first fold
-    # dff = DepthFirstFold("HHPHHHPHPHHHPH")
-    # print("Starting Depth First Fold...")
-    # solution = dff.run()
+    # ## do depth first fold
+    # # dff = DepthFirstFold("HHPHHHPHPHHHPH")
+    # # print("Starting Depth First Fold...")
+    # # solution = dff.run()
+    # # print(solution)
+    # # output(solution, subdir=dff.__class__.__name__)
+    # # visualize_protein(
+    # #    solution,
+    # #    save_fig=True,
+    # #    save_fig_dir=dff.__class__.__name__,
+    # # )
+
+    # #  hcb = HillClimber("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
+    # #  solution, time = time_func(
+    # #      hcb.run,
+    # #      kargs={"runs": 20, "iterations": 250, "verbose": False}
+    # #  )
+    # #
+    # #  print(f"time taken to run {hcb.__class__.__name__}: {time:.1f}")
+    # #  print(solution)
+    # #  output(solution, hcb.__class__.__name__)
+    # #  visualize_protein(
+    # #      solution,
+    # #      save_fig=True,
+    # #      save_fig_dir=hcb.__class__.__name__,
+    # #      save_fig_filename=f"{hcb.__class__.__name__}_{solution.types}"
+    # #  )
+
+    # #  phc = ParallelHillClimber(
+    # #      "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH"
+    # #  )
+    # #
+    # #  # start
+    # #  solution, time = time_func(
+    # #      phc.run,
+    # #      kargs={"runs": 20, "iterations": 250, "verbose": False}
+    # #  )
+    # #
+    # #  print(f"time taken to run {phc.__class__.__name__}: {time:.1f}")
+    # #  print(solution)
+    # #
+    # #  # output
+    # #  output(solution, subdir=phc.__class__.__name__)
+    # #  visualize_protein(
+    # #      solution,
+    # #      save_fig=True,
+    # #      save_fig_dir=phc.__class__.__name__,
+    # #      save_fig_filename=f"{phc.__class__.__name__}_{solution.types}"
+    # #  )
+
+    # sim = SimulatedAnnealing("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
+    # print("Starting simulated annealing")
+    # solution = sim.run(iterations=1000, verbose=3)
     # print(solution)
-    # output(solution, subdir=dff.__class__.__name__)
+    # output(solution)
     # visualize_protein(
-    #    solution,
-    #    save_fig=True,
-    #    save_fig_dir=dff.__class__.__name__,
+    #     solution,
+    #     save_fig=True,
+    #     save_fig_filename=f"{sim.__class__.__name__}.png"
     # )
-
-    #  hcb = HillClimber("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
-    #  solution, time = time_func(
-    #      hcb.run,
-    #      kargs={"runs": 20, "iterations": 250, "verbose": False}
-    #  )
-    #
-    #  print(f"time taken to run {hcb.__class__.__name__}: {time:.1f}")
-    #  print(solution)
-    #  output(solution, hcb.__class__.__name__)
-    #  visualize_protein(
-    #      solution,
-    #      save_fig=True,
-    #      save_fig_dir=hcb.__class__.__name__,
-    #      save_fig_filename=f"{hcb.__class__.__name__}_{solution.types}"
-    #  )
-
-    #  phc = ParallelHillClimber(
-    #      "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH"
-    #  )
-    #
-    #  # start
-    #  solution, time = time_func(
-    #      phc.run,
-    #      kargs={"runs": 20, "iterations": 250, "verbose": False}
-    #  )
-    #
-    #  print(f"time taken to run {phc.__class__.__name__}: {time:.1f}")
-    #  print(solution)
-    #
-    #  # output
-    #  output(solution, subdir=phc.__class__.__name__)
-    #  visualize_protein(
-    #      solution,
-    #      save_fig=True,
-    #      save_fig_dir=phc.__class__.__name__,
-    #      save_fig_filename=f"{phc.__class__.__name__}_{solution.types}"
-    #  )
-
-    sim = SimulatedAnnealing("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
-    print("Starting simulated annealing")
-    solution = sim.run(iterations=1000, verbose=3)
-    print(solution)
-    output(solution)
-    visualize_protein(
-        solution,
-        save_fig=True,
-        save_fig_filename=f"{sim.__class__.__name__}.png"
-    )
 
 if __name__ == "__main__":
     main()

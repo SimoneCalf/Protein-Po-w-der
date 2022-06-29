@@ -1,7 +1,6 @@
 from multiprocessing import Process, cpu_count, Queue
 from os import getpid
 from typing import Union
-
 from algorithms.hillclimber import HillClimber
 from classes.protein import Protein
 

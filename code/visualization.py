@@ -2,7 +2,6 @@
 import matplotlib.pyplot as plot
 from matplotlib.path import Path
 import matplotlib.patches as patches
-from mimetypes import guess_type
 import pandas as pd
 import os
 from typing import Any, Callable, Union
