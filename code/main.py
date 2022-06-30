@@ -60,7 +60,7 @@ def create_protein(protein_input_str: str = None) -> Union[Protein, None]:
             continue
 
 
-def time_func(func: Callable, msg: str = "", kargs: Dict[any] = {}):
+def time_func(func: Callable, msg: str = "", kargs: Dict[any, any] = {}):
     # !!
     if not isinstance(func, Callable):
         raise TypeError("function argument {func} wasn't callable")
@@ -84,9 +84,6 @@ def main():
         fold_randomly(protein, prev=protein.aminos[0])
         output(protein)
         visualize_protein(protein)
-        for amino in protein.aminos:
-            for bond in amino.bonded:
-                print(bond.target, amino.bonded.origin)
 
     # ## do depth first fold
     # # dff = DepthFirstFold("HHPHHHPHPHHHPH")

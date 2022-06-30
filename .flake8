@@ -1,0 +1,6 @@
+[flake8]
+# disables 'line too long' linting error for docstring links;
+# unfortately there's no way to ignore it only for code blocks
+# or *within* docstrings; it's weird that it parses docstrings anyway
+docstring-convention = numpydoc
+ignore = E501
