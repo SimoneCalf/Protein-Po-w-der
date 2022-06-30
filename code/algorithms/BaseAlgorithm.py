@@ -27,7 +27,19 @@ class BaseAlgorithm():
 
     """
     def __init__(self, protein: Union[Protein, str]) -> None:
-        # !!
+        """Constructor method for BaseAlgorithm, do not call directly
+
+        Parameters
+        ----------
+        protein : Union[Protein, str]
+            the protein to run an algorithm on (not this one though)
+
+        Raises
+        ------
+        TypeError
+            Returns a TypeError if the given argument is neither a protein,
+            nor a string;
+        """
         # create protein from string if string was given
         if type(protein) == str:
             self.__protein = Protein(protein)
@@ -47,12 +59,29 @@ class BaseAlgorithm():
         self.__thread = None
 
     @property
-    def protein(self):
-        # !!
+    def protein(self) -> Protein:
+        """Returns a copy of the protein this algorithm was initiated with
+
+        Returns
+        -------
+        Protein
+            a new protein instance with the same data as the protein this
+            algorithm was initiated with
+        """
         return Protein.copy(self.__protein)
 
-    def __loglisten(_, q):
-        # !!
+    def __loglisten(self, q: deque):
+        """Listens to and prints log messages put in the log queue
+
+        This function will run in a endless loop, until the queue is empty
+        so not to be called directly; instead use `BaseAlgorithm.log` which
+        starts this function in a seperate thread
+`
+        Parameters
+        ----------
+        q : deque
+            the queue this function will check for messages
+        """
         while True:
             if q:
                 print(q.popleft(), end="\033[K\r", flush=True)
@@ -95,6 +124,43 @@ class BaseAlgorithm():
         # add message to the queue
         self.__log.append(msg)
 
-    def run(verbose: bool = False):
-        # !!
+    def parallel(self) -> Protein:
+        """
+        Function that must be implemented by any child processes that use
+        multiprocessing
+
+        Returns
+        -------
+        Protein
+            the implemented function must return Protein, so that the function
+            may be directly called as well
+
+        Raises
+        ------
+        NotImplementedError
+            This function must be implemented by any child classes
+        """
+        raise NotImplementedError
+
+    def run(verbose: bool = False) -> Protein:
+        """
+        Function children classes must overload;
+        to be used to start the algorith
+
+        Parameters
+        ----------
+        verbose : bool, optional
+            whether to log messages to stdout, by default False
+
+        Return
+        ------
+        Protein :
+            any child class must implement run such that it returns
+            a Protein instance
+
+        Raises
+        ------
+        NotImplementedError
+            This function must be implemented by any child classes
+        """
         raise NotImplementedError

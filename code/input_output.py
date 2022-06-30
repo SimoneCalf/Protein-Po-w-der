@@ -44,7 +44,10 @@ def output(protein: Protein, subdir: str = "/", prefix: str = "output"):
 
     if not isinstance(protein, Protein):
         raise \
-            TypeError("protein argument {protein} must be a Protein instance.")
+            TypeError(
+                f"'protein' argument must be a Protein instance; " +
+                f"was {type(protein)}"
+            )
 
     filename = f"{prefix}_{Protein.to_sha1(protein)}.csv"
     directory = f"{os.getcwd()}/data/{subdir}"

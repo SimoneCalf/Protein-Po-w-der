@@ -1,14 +1,14 @@
 import random
 import sys
-from typing import List
+from typing import List, Union
 
 from classes.amino import Amino
 from classes.protein import Protein
 
 
 def fold_randomly(
-        protein: Protein,
-        prev: Amino,
+        protein: Union[Protein, str],
+        prev: Amino =  None,
         faulty_directions: List[int] = []):
     """Folds a protein in a random direction at every amino
 
@@ -27,6 +27,24 @@ def fold_randomly(
         `GFG <https://www.geeksforgeeks.org/python-handling-recursion-limit/>`
         for credit for the code for increasing the recursion count
     """
+
+    if not isinstance(protein, Protein) or not isinstance(protein, Protein):
+        raise TypeError(
+            f"positional parameter 'protein' must be a Protein object, "
+            f" was {protein}."
+        )
+    if prev is not None and not isinstance(prev, Amino):
+        raise TypeError(
+            f"positional parameter 'prev' must be a Amino object, " +
+            f" was {protein}."
+        )
+
+    # massage protein to Protein if a string was given
+    if isinstance(protein, str):
+        protein = Protein(protein)
+
+    if prev is None:
+        prev = protein.aminos[0]
 
     # get default recursion limit for later
     default_recur_count = sys.getrecursionlimit()

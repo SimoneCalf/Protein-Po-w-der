@@ -118,12 +118,35 @@ class Amino:
 
     @property
     def direction(self) -> int:
-        # !!
+        """Returns the direction of this amino
+
+        Returns
+        -------
+        int
+            the direction of this amino
+        """
         return self._direction
 
     @direction.setter
     def direction(self, dir: int) -> int:
-        # !!
+        """Sets the direction of this amino
+
+        Parameters
+        ----------
+        dir : int
+            the direction to set this to, must be between -2 to 2
+
+        Returns
+        -------
+        int
+            Returns the direction
+
+        Raises
+        ------
+        ValueError
+            Returns a ValueError when the given direction is not between
+            a range of -2 to 2; as we only live in a 2d world
+        """
         if dir not in range(-2, 3):
             raise ValueError(
                 "Given direction is not valid. \
@@ -174,6 +197,29 @@ class Amino:
             the x and y coordinates of the point this amino is pointing to
         """
         return Amino.get_coordinates_at(self, self.direction)
+
+    @staticmethod
+    def copy(amino: 'Amino') -> 'Amino':
+        """Copies the data of an amino into a new instance
+
+        Parameters
+        ----------
+        amino : Amino
+            the amino to copy
+
+        Returns
+        -------
+        Amino
+            a new amino intiated with the same values as the given aminos
+        """
+        return Amino(
+            amino.type,
+            direction=amino.direction,
+            index=amino.index,
+            coords=(amino.x, amino.y, amino.z)
+        )
+
+
 
     def __eq__(self, obj: any) -> bool:
         """Compares object to this instance
@@ -265,13 +311,46 @@ class AminoBond:
 
     """
     def __init__(self, origin: Amino, target: Amino) -> None:
-        # !!
+        """Constructor method for AminoBond
+
+        Parameters
+        ----------
+        origin : Amino
+            the origin amino of the bond; which is which does not matter
+        target : Amino
+            the target amino of this bond; whihc is which does not matter
+        """
+        if not isinstance(origin, Amino):
+            raise TypeError(
+                f"target parameter must be an Amino object; was {origin}"
+            )
+        if not isinstance(target, Amino):
+            raise TypeError(
+                f"target parameter must be an Amino object; was {target}"
+            )
+
         self.origin = origin
         self.target = target
 
     def __eq__(self, __o: object) -> bool:
-        # !!
-        if type(__o) != type(self):
+        """
+        Checks if given object is equals this instance;
+        used by 'is', '!==' and 'in' checks.
+
+        which amino is the target and which amino is the origin is not relevant
+        for this
+
+        Parameters
+        ----------
+        __o : object
+            the object to check against this instance
+
+        Returns
+        -------
+        bool
+            True if the given object equals this instance, False otherwise
+        """
+        if isinstance(__o, self.__class__):
             return False
         if __o.origin != self.origin and __o.origin != self.target:
             return False
@@ -285,10 +364,23 @@ class AminoBond:
         return True
 
     def __hash__(self) -> int:
-        # !!
+        """Creates a hash for easy dictionary and set lookup
+
+        Returns
+        -------
+        int
+            the hash of this amino
+        """
         return hash((self.origin, self.target))
 
     def __repr__(self) -> str:
-        # !!
+        """Representis this AminoBond as a string
+
+        Returns
+        -------
+        str
+            string of format 'H0-P1' where the first is the origin amino
+            and the right is the target amino
+        """
         return f"{self.origin.type}{self.origin.index}-" +\
             f"{self.target.type}{self.target.index}"

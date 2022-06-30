@@ -7,9 +7,6 @@ from classes.protein import Protein
 
 
 class ParallelHillClimber(HillClimber):
-    def __init__(self, protein: Union[Protein, str]) -> None:
-        # !!
-        super().__init__(protein)
 
     def log(self, msg: str, end=False):
         """A single-threaded version of BaseAlgorithm log
@@ -21,11 +18,12 @@ class ParallelHillClimber(HillClimber):
 
         See Also
         --------
-        BaseAlgorithm.log: A threaded log method that prints messages to
-                           stdout
+        `BaseAlgorithm.log`: A threaded log method that prints messages to
+                             stdout
         `PythonSpeed
         <https://pythonspeed.com/articles/python-multiprocessing/>`_:
             an article explaining why mixing threads and processes doesn't work
+
         """
         if not self.verbose:
             return
@@ -42,8 +40,23 @@ class ParallelHillClimber(HillClimber):
                 save_to: Queue,
                 iterations: int = 1000,
                 verbose: bool = False,
-            ):
-            # !!
+            ) -> Protein:
+        """
+        Function to be run in parallel, executes one run of hillclimber
+        Can also be called directly
+
+        Parameters
+        ----------
+        protein : Protein
+            the protein to run this function on
+        save_to : Queue
+            the queue to save results to
+        iterations : int, optional
+            the amount of maximum amount iterations to continue,
+            when no improvement was found; by default 1000
+        verbose : bool, optional
+            whether to log messages to stdout, by default False
+        """
         # make sure we'll run the algorithm at least once
         iterations = max(1, iterations)
 
@@ -70,8 +83,10 @@ class ParallelHillClimber(HillClimber):
                 f"score: {curr.score}",
             )
 
-        # we can only
+        # we can only store primitive types in a multiprocessing queue
+        # so we serialize our protein
         save_to.put({"types": curr.types, "directions": curr.directions})
+        return curr # return call in case paralel gets called directly
 
     def run(
         self,
@@ -79,7 +94,37 @@ class ParallelHillClimber(HillClimber):
         iterations: int = 1000,
         verbose: Union[bool, int] = 0
     ) -> Protein:
-    # !!
+        """
+        Function that starts running the algorithm on
+        the protein this instance was initiated with
+
+
+        Parameters
+        ----------
+        runs : int, optional
+            the amount of runs to do (in paralel), by default 10
+        iterations : int, optional
+            how many iterations to continue while finding no improvement
+            is reset when an improvement is found; by default 1000
+        verbose : Union[bool, int], optional
+            Whether to log messages to stdout, by default 0
+            this is changed from the single-process version of HillClimber
+            to implement a loglevel:
+
+                0, False: do not log messages to stdout
+
+                1, True:  only log messages between runs
+
+                2:        log status messages during runs,
+                          whenever we've improved our best solution
+
+                3:        log status messages during runs; every iteration
+
+        Returns
+        -------
+        Protein
+            the best solution we have found overall
+        """
         # update verbose flag
         self.verbose = verbose
         # initialize values for managing processes and their results

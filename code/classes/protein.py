@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from functools import reduce
 from hashlib import sha1
 import numpy as np
@@ -34,7 +35,9 @@ class Protein:
             # create amino
             amino = Amino(
                 type=char,
-                direction=directions[i] if i < len(directions) else 0,
+                direction=directions[i]
+                if isinstance(directions, Sequence) and
+                i < len(directions) else 0,
                 index=len(self.__aminos),
                 x=len(self.__aminos)
             )
@@ -43,15 +46,15 @@ class Protein:
         self.__populate_grid()
 
     @property
-    def aminos(self) -> List[Amino]:
+    def aminos(self) -> Tuple[Amino]:
         """Getter function for the list of Amino acids in this Protein instance
 
         Returns
         -------
-        list[Amino]
-            A new list containing the current Amino acids of this instance
+        Tuple[Amino]
+            A tuple containing copies of the current Amino acids of this instance
         """
-        return self.__aminos.copy()
+        return tuple(map(lambda a: Amino.copy(a), self.__aminos))
 
     def __populate_grid(self, index=0, in_place=False):
         """Populates a 2d grid representation of the protein
@@ -139,12 +142,29 @@ class Protein:
 
     @property
     def types(self) -> str:
-        # !!
+        """Returns the types of the aminos of this protein
+
+        Useful for serialization
+
+        Returns
+        -------
+        str
+            A string where each character represents the type of an amino;
+            should be the same as the string this Protein was initialized with
+        """
         return "".join(map(lambda a: a.type, self.__aminos))
 
     @property
     def directions(self) -> Tuple[int, ...]:
-        # !!
+        """the directions of the aminos of this protein
+
+        Useful for serialization
+
+        Returns
+        -------
+        Tuple[int, ...]
+            a tuple containing the directions of each amino.
+        """
         return tuple(map(lambda a: a.direction, self.__aminos))
 
     def append(self, amino: Amino) -> List[Amino]:
@@ -161,6 +181,9 @@ class Protein:
             a new list containing the amino acids that make up this protein,
             including the appended one
         """
+        if not isinstance(amino, Amino):
+            raise TypeError("amino parameter must be an Amino.")
+
         amino.index = len(self.__aminos)
         self.__aminos.append(amino)
         self.calculate_bonds(self.__aminos[amino.index:])
@@ -191,8 +214,8 @@ class Protein:
             a list containing the possible fold directions
 
         """
-        if amino is None:
-            return []
+        if not isinstance(amino, Amino):
+            raise TypeError("amino parameter must be an Amino.")
 
         if not completely_random and amino.index == 0:
             return [1]
@@ -223,23 +246,77 @@ class Protein:
             a new list containing the amino acids and their direction,
             or None if the given point was invalid
         """
+        if isinstance(index, Amino):
+            index = Amino.index
+        elif not isinstance(index, int):
+            return TypeError(f"index parameter must be an int; was {index}")
+
         try:
             self.__aminos[index].direction = direction
             self.__populate_grid(index)
-            self.calculate_bonds(self.__aminos[index:])
+            aminos = self.__aminos[index:]
 
             return self.aminos
         except IndexError:
+            # we don't catch the Value error as that's valuable info
+            # that we shouldn't silently pass
             return None
 
-    def empty_coordinate(self, amino, direction) -> bool:
-        # !!
+    def empty_coordinate(self, amino: Union[Amino, int], direction: int) -> bool:
+        """Checks if a space of a given amino is empty or already filled
+
+        Parameters
+        ----------
+        amino : Union[Amino, index]
+            The amino whose immediate neighbouring spaces to check;
+            can be either an amino object or the index of an amino
+        direction : int
+            The direction to of the immediate space to check; must be
+            an integer between -2 and 2
+
+
+        Returns
+        -------
+        bool:
+            True if that immediate space in the given direction is empty;
+            False otherwise
+        """
+        if direction not in range(-2, 3):
+            raise ValueError("Invalid direction")
+
+        if type(amino) is int:
+            amino = self.__aminos[amino]
         x, y = amino.get_coordinates_at(amino, direction)
         return self.__grid[y, x] is None
 
-    def calculate_bonds(self, aminos: Sequence) -> Set[Tuple[Amino]]:
-        # !!
-        bonds = []
+
+    def calculate_bonds(self, aminos: Sequence[Amino] = None) -> Set[AminoBond]:
+        """
+        Calculates the amount of bonds of a sequence of  aminos in the
+        proteins current configuration
+
+        Parameters
+        ----------
+        aminos : Sequence
+            the aminos to check
+
+        Returns
+        -------
+        Set[AminoBonds]
+            A set of amino bonds representing the bonds between aminos
+        """
+
+        if aminos is None:
+            aminos = self.aminos
+
+        # CC-By-SA 4: (C) Gareth Latty, https://stackoverflow.com/a/10666320
+        if aminos and not all(map(lambda a: isinstance(a, Amino), aminos)):
+            ValueError(
+                "aminos parameter must be a sequence of Amino items; " +
+                f"was {aminos}"
+            )
+
+        bonds = set()
 
         # loop through given list of aminos
         for amino in aminos:
@@ -275,7 +352,7 @@ class Protein:
                         self.__grid[y, x].bonded.add(amino)
                         bond = AminoBond(amino, target)
                         if bond not in bonds:
-                            bonds.append(AminoBond(amino, target))
+                            bonds.add(AminoBond(amino, target))
         return bonds
 
     @property
@@ -302,12 +379,12 @@ class Protein:
 
         return score
 
-    def next_uninitialized(self) -> Union[Amino, None]:
+    def next_uninitialized(self) -> Optional[Amino]:
         """Returns the next uninitialized amino in the protein
 
         Returns
         -------
-        Union[Amino,None]
+        Optional[Amino]
             returns the closest amino with a direction of 0,
             or None if none are left (except the last)
         """
